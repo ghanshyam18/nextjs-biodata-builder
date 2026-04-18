@@ -1,8 +1,8 @@
-# 💍 Biodata Builder - Premium Matrimonial Profiles
+![Product Banner](/public/logo.svg)
 
-A secure, high-performance, and SEO-optimized web application to create beautiful matrimonial biodata instantly. Built with a mobile-first philosophy to ensure the best experience for all users.
+> **The most elegant way to build your marriage biodata. Modern, responsive, and privacy-first.**
 
-![Product Banner](https://biodatabuilder.example.com/social-preview.jpg)
+A professional, high-performance, and SEO-optimized web application to create beautiful matrimonial biodata instantly. Built with a mobile-first philosophy to ensure the best experience for all users.
 
 ## 🌟 Key Features
 
@@ -32,8 +32,8 @@ A secure, high-performance, and SEO-optimized web application to create beautifu
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/biodata-builder.git
-   cd biodata-builder
+   git clone https://github.com/ghanshyam18/nextjs-biodata-builder.git
+   cd nextjs-biodata-builder
    ```
 
 2. Install dependencies:
@@ -58,7 +58,10 @@ To generate the production-ready files:
 npm run build
 ```
 
-The optimized files will be generated in the `out/` directory. Simply upload this directory to your hosting provider (Vercel, Netlify, GitHub Pages, etc.).
+The optimized files will be generated in the `out/` directory. Simply upload this directory to your hosting provider (Vercel, GitHub Pages, etc.).
+
+### 🏗️ Hybrid-Ready Architecture
+While this project is currently optimized for static export, it is **Hybrid-Ready**. To switch to a full Next.js server mode (for API routes or SSR), simply remove the `output: 'export'` line in `next.config.mjs`.
 
 ## 🛡️ Security & Validation
 
