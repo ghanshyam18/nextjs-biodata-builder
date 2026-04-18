@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.3.0 (2026-04-18)
+
+
+### Features
+
+* automate changelog generation and simplify select component UX ([20bc6f6](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/20bc6f634316d1639a1b86470a6857e3baf9235b))
+* implement dedicated print container with A4 dimensions for high-fidelity PDF exports ([f09e6a4](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/f09e6a4f54f3c5cb4e6f97aecae220213f2b069d))
+
+
+### Bug Fixes
+
+* ensure preview visibility by providing explicit minimum height ([ae84236](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/ae84236ae8749482309eb0f0e5fe4a29feb2ca60))
+* optimize global font integration and align Mantine theme for production ([c8cc8e1](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/c8cc8e1fd3a3fe831a2367e4bfbf1491b99f99c2))
+* resolve theme inconsistency and mobile preview overlap ([87a660c](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/87a660c66c7e7de7f69f3b59a4be16f863ccc778))
 
 ## [1.0.0] - 2026-04-18
 
