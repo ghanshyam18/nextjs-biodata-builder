@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 
 import TraditionalTemplate from '../../../../components/templates/Traditional';
 
-// Dynamically import other templates for performance optimization
 const ModernTemplate = dynamic(() => import('../../../../components/templates/Modern'), {
   loading: () => <Center h={400}><Loader color="blue" /></Center>
 });
@@ -34,10 +33,10 @@ export default function Preview({ data, template }: PreviewProps) {
   const { ref, width } = useElementSize();
   const [scale, setScale] = useState(1);
   const TARGET_WIDTH = 800;
+  const ASPECT_RATIO = 1.414; // A4 aspect ratio
 
   useEffect(() => {
     if (width > 0) {
-      // Calculate scale factor, max 1 (don't upscale)
       const newScale = Math.min(1, width / TARGET_WIDTH);
       setScale(newScale);
     }
@@ -45,34 +44,28 @@ export default function Preview({ data, template }: PreviewProps) {
 
   const getTemplate = () => {
     switch (template) {
-      case 'modern':
-        return <ModernTemplate data={data} />;
-      case 'minimalist':
-        return <MinimalistTemplate data={data} />;
-      case 'floral':
-        return <FloralTemplate data={data} />;
-      case 'elegant':
-        return <ElegantTemplate data={data} />;
-      case 'classic':
-        return <ClassicTemplate data={data} />;
+      case 'modern': return <ModernTemplate data={data} />;
+      case 'minimalist': return <MinimalistTemplate data={data} />;
+      case 'floral': return <FloralTemplate data={data} />;
+      case 'elegant': return <ElegantTemplate data={data} />;
+      case 'classic': return <ClassicTemplate data={data} />;
       case 'traditional':
-      default:
-        return <TraditionalTemplate data={data} />;
+      default: return <TraditionalTemplate data={data} />;
     }
   };
 
+  const scaledHeight = TARGET_WIDTH * ASPECT_RATIO * scale;
+
   return (
-    <Box ref={ref} style={{ width: '100%', overflow: 'hidden' }}>
+    <Box ref={ref} style={{ width: '100%', minHeight: scaledHeight }}>
       <Box
         style={{
           width: TARGET_WIDTH,
+          minHeight: TARGET_WIDTH * ASPECT_RATIO,
+          position: 'relative',
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
-          // Adjust height of the container to match scaled height
-          // A4 aspect ratio is approx 1:1.414, so height is TARGET_WIDTH * 1.414
-          // Scaled height is (TARGET_WIDTH * 1.414) * scale
-          marginBottom: `calc(${TARGET_WIDTH * 1.414 * scale}px - ${TARGET_WIDTH * 1.414}px)`,
-          transition: 'transform 0.2s ease',
+          transition: 'transform 0.1s ease',
         }}
       >
         {getTemplate()}
