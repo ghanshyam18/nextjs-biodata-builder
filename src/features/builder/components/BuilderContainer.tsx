@@ -184,7 +184,6 @@ export default function BuilderContainer() {
               onChange={(e) => setTemplate((e as TemplateStyle) || 'traditional')}
               data={templates.map(t => ({ value: t.id, label: t.name }))}
               size="sm"
-              searchable
               allowDeselect={false}
             />
           </Box>

@@ -141,8 +141,8 @@ export const PersonalInfoSection = memo(({
         </SimpleGrid>
 
         <SimpleGrid cols={{ base: 2, sm: 2 }}>
-          <Select label="Religion" placeholder="Select" clearable searchable data={['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Other']} key={form.key('personalDetails.religion')} {...form.getInputProps('personalDetails.religion')} />
-          <Select label="Manglik" placeholder="Select" clearable searchable data={['No', 'Yes', 'Anshik', "Don't Know"]} key={form.key('personalDetails.manglik')} {...form.getInputProps('personalDetails.manglik')} />
+          <Select label="Religion" placeholder="Select" clearable data={['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Other']} key={form.key('personalDetails.religion')} {...form.getInputProps('personalDetails.religion')} />
+          <Select label="Manglik" placeholder="Select" clearable data={['No', 'Yes', 'Anshik', "Don't Know"]} key={form.key('personalDetails.manglik')} {...form.getInputProps('personalDetails.manglik')} />
           <TextInput label="Caste" placeholder="e.g. Brahmin" key={form.key('personalDetails.caste')} {...form.getInputProps('personalDetails.caste')} />
           <TextInput label="Sub-caste" key={form.key('personalDetails.subCaste')} {...form.getInputProps('personalDetails.subCaste')} />
         </SimpleGrid>
