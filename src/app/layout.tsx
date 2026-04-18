@@ -4,26 +4,14 @@ import './globals.css';
 import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const outfit = Outfit({ 
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
+import { inter, outfit } from '../shared/fonts';
 
 const theme = createTheme({
   primaryColor: 'blue',
   defaultRadius: 'md',
-  fontFamily: 'var(--font-inter), sans-serif',
+  fontFamily: `${inter.style.fontFamily}, sans-serif`,
   headings: {
-    fontFamily: 'var(--font-outfit), var(--font-inter), sans-serif',
+    fontFamily: `${outfit.style.fontFamily}, sans-serif`,
   },
   components: {
     Button: {
@@ -76,13 +64,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript defaultColorScheme="auto" />
+        <ColorSchemeScript defaultColorScheme="light" forceColorScheme="light" />
         {/* Hydration fix for browser extensions like ColorZilla (cz-shortcut-listen mismatch) */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `
+             __html: `
               (function() {
                 function cleanup() {
                   if (document.body && document.body.hasAttribute('cz-shortcut-listen')) {
@@ -99,8 +87,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
-        <MantineProvider theme={theme} defaultColorScheme="auto">
+      <body suppressHydrationWarning>
+        <MantineProvider theme={theme} defaultColorScheme="light" forceColorScheme="light">
           <Notifications position="top-right" zIndex={2000} />
           {children}
         </MantineProvider>

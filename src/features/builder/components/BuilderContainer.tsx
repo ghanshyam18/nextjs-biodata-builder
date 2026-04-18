@@ -4,6 +4,7 @@ import { Suspense, useCallback, useState, useRef, memo } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { Edit3, Eye, Printer, Save } from 'lucide-react';
 import { AppShell, Flex, Box, ScrollArea, Select, Button, Group } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 import Editor from './Editor/Editor';
 import Preview from './Preview/Preview';
@@ -54,20 +55,75 @@ export default function BuilderContainer() {
     documentTitle: `Biodata_${form.getValues().personalDetails.fullName || 'New'}`,
   });
 
-  const onSaveClick = useCallback(async () => {
-    const result = await form.validate();
-    if (result.hasErrors) return;
-    
-    if (currentProfileId) {
-      handleSave('', form.getValues(), template);
-    } else {
-      setIsSaveModalOpen(true);
+  const onSaveClick = useCallback(() => {
+    // Defensive check for empty form/name before full validation to prevent internal crashes
+    const values = form.getValues();
+    if (!values.personalDetails.fullName?.trim()) {
+      notifications.show({
+        title: 'Form Required',
+        message: 'Please at least enter the Full Name before saving.',
+        color: 'red',
+        position: 'top-center'
+      });
+      return;
+    }
+
+    try {
+      const result = form.validate();
+      if (result.hasErrors) {
+        notifications.show({
+          title: 'Validation Failed',
+          message: 'Please check the highlighted errors in the form.',
+          color: 'red',
+          position: 'top-center'
+        });
+        return;
+      }
+      
+      if (currentProfileId) {
+        handleSave('', values, template);
+      } else {
+        setIsSaveModalOpen(true);
+      }
+    } catch (err) {
+      console.error('Validation Error:', err);
+      // Fallback if internal validate fails
+      if (currentProfileId) {
+        handleSave('', values, template);
+      } else {
+        setIsSaveModalOpen(true);
+      }
     }
   }, [form, currentProfileId, handleSave, template]);
 
-  const onPrintClick = useCallback(async () => {
-    const result = await form.validate();
-    if (!result.hasErrors) handlePrint();
+  const onPrintClick = useCallback(() => {
+    const values = form.getValues();
+    if (!values.personalDetails.fullName?.trim()) {
+      notifications.show({
+        title: 'Name Required',
+        message: 'Professional biodata requires at least a name to generate a valid PDF.',
+        color: 'red',
+        position: 'top-center'
+      });
+      return;
+    }
+
+    try {
+      const result = form.validate();
+      if (result.hasErrors) {
+        notifications.show({
+          title: 'Form Incomplete',
+          message: 'Correct the errors before generating PDF.',
+          color: 'red',
+          position: 'top-center'
+        });
+        return;
+      }
+    } catch (err) {
+      console.error('Validation Error:', err);
+    }
+    
+    handlePrint();
   }, [form, handlePrint]);
 
   const handleLoadProfile = useCallback((profile: SavedProfile) => {
