@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Clean Gradient Background -->
+  <rect width="512" height="512" rx="120" fill="url(#paint0_linear)"/>
+  
+  <!-- Minimalist White User Icon -->
+  <g transform="translate(128, 128)">
+    <!-- Head -->
+    <circle cx="128" cy="80" r="54" fill="white"/>
+    <!-- Shoulders -->
+    <path d="M26 256C26 202.981 68.9807 160 122 160H134C187.019 160 230 202.981 230 256V260H26V256Z" fill="white"/>
+  </g>
+
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#228BE6"/>
+      <stop offset="1" stop-color="#15AABF"/>
+    </linearGradient>
+  </defs>
+</svg>
