@@ -3,12 +3,13 @@ import { Stack, SimpleGrid, TextInput, Textarea } from '@mantine/core';
 import { SectionWrapper } from './SectionWrapper';
 import type { UseFormReturnType } from '@mantine/form';
 import type { BiodataFormValues } from '../../schemas/biodataSchema';
+import { memo } from 'react';
 
 interface ContactSectionProps {
   form: UseFormReturnType<BiodataFormValues>;
 }
 
-export function ContactSection({ form }: ContactSectionProps) {
+export const ContactSection = memo(({ form }: ContactSectionProps) => {
   return (
     <SectionWrapper title="Contact Details" icon={<Phone size={18} />}>
       <Stack gap="sm">
@@ -27,4 +28,4 @@ export function ContactSection({ form }: ContactSectionProps) {
       </Stack>
     </SectionWrapper>
   );
-}
+});

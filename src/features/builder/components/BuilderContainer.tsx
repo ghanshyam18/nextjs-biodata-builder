@@ -80,7 +80,7 @@ export default function BuilderContainer() {
         });
         return;
       }
-      
+
       if (currentProfileId) {
         handleSave('', values, template);
       } else {
@@ -123,7 +123,7 @@ export default function BuilderContainer() {
     } catch (err) {
       console.error('Validation Error:', err);
     }
-    
+
     handlePrint();
   }, [form, handlePrint]);
 
@@ -184,6 +184,8 @@ export default function BuilderContainer() {
               onChange={(e) => setTemplate((e as TemplateStyle) || 'traditional')}
               data={templates.map(t => ({ value: t.id, label: t.name }))}
               size="sm"
+              searchable
+              allowDeselect={false}
             />
           </Box>
 
@@ -220,7 +222,7 @@ export default function BuilderContainer() {
             >
               <ScrollArea h="100%" scrollbars="y" type="scroll">
                 <Box p="md" pb={80}>
-                  <Editor 
+                  <Editor
                     form={form}
                     handlePhotoChange={handlePhotoChange}
                     removePhoto={removePhoto}

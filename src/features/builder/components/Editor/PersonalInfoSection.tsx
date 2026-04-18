@@ -3,6 +3,7 @@ import { Stack, Group, Image, Box, FileButton, Button, TextInput, SimpleGrid, Se
 import { SectionWrapper } from './SectionWrapper';
 import type { UseFormReturnType } from '@mantine/form';
 import type { BiodataFormValues } from '../../schemas/biodataSchema';
+import { memo } from 'react';
 
 interface PersonalInfoSectionProps {
   form: UseFormReturnType<BiodataFormValues>;
@@ -12,13 +13,13 @@ interface PersonalInfoSectionProps {
   updateTime: (h: string, m: string, p: string) => void;
 }
 
-export function PersonalInfoSection({
+export const PersonalInfoSection = memo(({
   form,
   handlePhotoChange,
   removePhoto,
   parseTime,
   updateTime,
-}: PersonalInfoSectionProps) {
+}: PersonalInfoSectionProps) => {
   const photo = form.values.personalDetails.photo;
 
   return (
@@ -84,26 +85,42 @@ export function PersonalInfoSection({
           <Box>
             <Input.Label mb={6} fw={600} fz="sm">Time of Birth</Input.Label>
             <Group gap="xs" grow align="flex-start">
-              <Select searchable placeholder="HH"
+              <TextInput 
+                placeholder="HH"
+                maxLength={2}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 key={form.key('personalDetails.timeOfBirth-hh')}
-                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).h || undefined}
-                onChange={(v) => { const t = parseTime(form.values.personalDetails.timeOfBirth); updateTime(v || '12', t.m, t.p); }}
-                data={Array.from({ length: 12 }, (_, i) => String(i + 1))}
+                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).h || ''}
+                onChange={(e) => { 
+                  const v = e.target.value.replace(/\D/g, '');
+                  const t = parseTime(form.values.personalDetails.timeOfBirth); 
+                  updateTime(v || '12', t.m, t.p); 
+                }}
                 size="sm"
               />
-              <Select searchable placeholder="MM"
+              <TextInput 
+                placeholder="MM"
+                maxLength={2}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 key={form.key('personalDetails.timeOfBirth-mm')}
-                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).m || undefined}
-                onChange={(v) => { const t = parseTime(form.values.personalDetails.timeOfBirth); updateTime(t.h, v || '00', t.p); }}
-                data={Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'))}
+                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).m || ''}
+                onChange={(e) => { 
+                  const v = e.target.value.replace(/\D/g, '');
+                  const t = parseTime(form.values.personalDetails.timeOfBirth); 
+                  updateTime(t.h, v || '00', t.p); 
+                }}
                 size="sm"
               />
-              <Select placeholder="AM/PM"
+              <Select 
+                placeholder="AM/PM"
                 key={form.key('personalDetails.timeOfBirth-ampm')}
                 defaultValue={parseTime(form.values.personalDetails.timeOfBirth).p || undefined}
                 onChange={(v) => { const t = parseTime(form.values.personalDetails.timeOfBirth); updateTime(t.h, t.m, v || 'AM'); }}
                 data={['AM', 'PM']}
                 size="sm"
+                allowDeselect={false}
               />
             </Group>
           </Box>
@@ -124,8 +141,8 @@ export function PersonalInfoSection({
         </SimpleGrid>
 
         <SimpleGrid cols={{ base: 2, sm: 2 }}>
-          <Select label="Religion" placeholder="Select" data={['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Other']} key={form.key('personalDetails.religion')} {...form.getInputProps('personalDetails.religion')} />
-          <Select label="Manglik" placeholder="Select" data={['No', 'Yes', 'Anshik', "Don't Know"]} key={form.key('personalDetails.manglik')} {...form.getInputProps('personalDetails.manglik')} />
+          <Select label="Religion" placeholder="Select" clearable searchable data={['Hindu', 'Sikh', 'Jain', 'Muslim', 'Christian', 'Other']} key={form.key('personalDetails.religion')} {...form.getInputProps('personalDetails.religion')} />
+          <Select label="Manglik" placeholder="Select" clearable searchable data={['No', 'Yes', 'Anshik', "Don't Know"]} key={form.key('personalDetails.manglik')} {...form.getInputProps('personalDetails.manglik')} />
           <TextInput label="Caste" placeholder="e.g. Brahmin" key={form.key('personalDetails.caste')} {...form.getInputProps('personalDetails.caste')} />
           <TextInput label="Sub-caste" key={form.key('personalDetails.subCaste')} {...form.getInputProps('personalDetails.subCaste')} />
         </SimpleGrid>
@@ -133,4 +150,4 @@ export function PersonalInfoSection({
       </Stack>
     </SectionWrapper>
   );
-}
+});

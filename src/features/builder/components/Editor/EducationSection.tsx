@@ -3,12 +3,13 @@ import { SimpleGrid, TextInput } from '@mantine/core';
 import { SectionWrapper } from './SectionWrapper';
 import type { UseFormReturnType } from '@mantine/form';
 import type { BiodataFormValues } from '../../schemas/biodataSchema';
+import { memo } from 'react';
 
 interface EducationSectionProps {
   form: UseFormReturnType<BiodataFormValues>;
 }
 
-export function EducationSection({ form }: EducationSectionProps) {
+export const EducationSection = memo(({ form }: EducationSectionProps) => {
   return (
     <SectionWrapper title="Education & Career" icon={<GraduationCap size={18} />}>
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
@@ -19,4 +20,4 @@ export function EducationSection({ form }: EducationSectionProps) {
       </SimpleGrid>
     </SectionWrapper>
   );
-}
+});

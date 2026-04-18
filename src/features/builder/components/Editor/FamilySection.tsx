@@ -3,12 +3,13 @@ import { SimpleGrid, TextInput, Select } from '@mantine/core';
 import { SectionWrapper } from './SectionWrapper';
 import type { UseFormReturnType } from '@mantine/form';
 import type { BiodataFormValues } from '../../schemas/biodataSchema';
+import { memo } from 'react';
 
 interface FamilySectionProps {
   form: UseFormReturnType<BiodataFormValues>;
 }
 
-export function FamilySection({ form }: FamilySectionProps) {
+export const FamilySection = memo(({ form }: FamilySectionProps) => {
   return (
     <SectionWrapper title="Family Details" icon={<Users size={18} />}>
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
@@ -19,8 +20,8 @@ export function FamilySection({ form }: FamilySectionProps) {
         <TextInput label="Siblings" placeholder="1 Brother, 1 Sister" key={form.key('familyDetails.siblings')} {...form.getInputProps('familyDetails.siblings')} />
         <TextInput label="Grandparents" key={form.key('familyDetails.grandparents')} {...form.getInputProps('familyDetails.grandparents')} />
         <TextInput label="Hometown" placeholder=" Jaipur" key={form.key('familyDetails.hometown')} {...form.getInputProps('familyDetails.hometown')} />
-        <Select label="Family Type" placeholder="Select" data={['Nuclear', 'Joint']} key={form.key('familyDetails.familyType')} {...form.getInputProps('familyDetails.familyType')} />
+        <Select label="Family Type" placeholder="Select" clearable searchable data={['Nuclear', 'Joint']} key={form.key('familyDetails.familyType')} {...form.getInputProps('familyDetails.familyType')} />
       </SimpleGrid>
     </SectionWrapper>
   );
-}
+});

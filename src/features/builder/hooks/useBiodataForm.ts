@@ -1,6 +1,6 @@
 import { useForm } from '@mantine/form';
 import { zodResolver } from 'mantine-form-zod-resolver';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { biodataSchema, type BiodataFormValues } from '../schemas/biodataSchema';
 import { initialBiodataState } from '../../../shared/constants/initialState';
 import { compressImage } from '../../../shared/utils/image';
@@ -12,21 +12,31 @@ export function useBiodataForm() {
     mode: 'uncontrolled',
     initialValues: initialBiodataState,
     validate: zodResolver(biodataSchema),
+    onValuesChange: () => syncPreview(),
   });
 
-  // Performance Optimization: Update preview on demand or periodically
-  // In uncontrolled mode, we'll sync values before Preview or on specific events
-  // For live preview, we can use form.watch if available or just getValues in effect
   const [lastUpdate, setLastUpdate] = useState(0);
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+  // Sync values to preview with debouncing to prevent lag
+  const syncPreview = useCallback(() => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    
+    const timer = setTimeout(() => {
       const currentValues = form.getValues();
-      // Only update if values actually changed to avoid unnecessary re-renders
-      setPreviewData(currentValues);
-    }, 1000); // 1s sync is sufficient for uncontrolled "live" preview without overhead
-    return () => clearInterval(interval);
-  }, [form]);
+      setPreviewData({...currentValues});
+    }, 300); // 300ms debounce is optimal for responsiveness vs performance
+    
+    setDebounceTimer(timer);
+  }, [form, debounceTimer]);
+
+  // Initial sync and cleanup
+  useEffect(() => {
+    syncPreview();
+    return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+    };
+  }, []);
 
   const handlePhotoChange = async (file: File | null) => {
     if (!file) return;

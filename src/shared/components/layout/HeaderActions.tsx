@@ -33,6 +33,8 @@ export default function HeaderActions({
             data={templates.map(t => ({ value: t.id, label: t.name }))}
             w={160}
             size="sm"
+            searchable
+            allowDeselect={false}
           />
         </Box>
         <Button

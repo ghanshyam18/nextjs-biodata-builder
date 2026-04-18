@@ -1,7 +1,7 @@
 import { Stack } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { BiodataFormValues } from '../../schemas/biodataSchema';
-import { useCallback } from 'react';
+import { useCallback, memo } from 'react';
 import { PersonalInfoSection } from './PersonalInfoSection';
 import { EducationSection } from './EducationSection';
 import { FamilySection } from './FamilySection';
@@ -15,13 +15,13 @@ interface EditorProps {
   updateTime: (h: string, m: string, p: string) => void;
 }
 
-export default function Editor({
+export const Editor = memo(({
   form,
   handlePhotoChange,
   removePhoto,
   parseTime,
   updateTime,
-}: EditorProps) {
+}: EditorProps) => {
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       if (e.target instanceof HTMLTextAreaElement) return;
@@ -51,4 +51,6 @@ export default function Editor({
       <ContactSection form={form} />
     </Stack>
   );
-}
+});
+
+export default Editor;
