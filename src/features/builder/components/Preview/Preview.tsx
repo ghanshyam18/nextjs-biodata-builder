@@ -3,6 +3,8 @@
 import dynamic from 'next/dynamic';
 import type { BiodataData, TemplateStyle } from '../../../../shared/types';
 import { Box, Center, Loader } from '@mantine/core';
+import { useElementSize } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
 
 import TraditionalTemplate from '../../../../components/templates/Traditional';
 
@@ -29,6 +31,18 @@ interface PreviewProps {
 }
 
 export default function Preview({ data, template }: PreviewProps) {
+  const { ref, width } = useElementSize();
+  const [scale, setScale] = useState(1);
+  const TARGET_WIDTH = 800;
+
+  useEffect(() => {
+    if (width > 0) {
+      // Calculate scale factor, max 1 (don't upscale)
+      const newScale = Math.min(1, width / TARGET_WIDTH);
+      setScale(newScale);
+    }
+  }, [width]);
+
   const getTemplate = () => {
     switch (template) {
       case 'modern':
@@ -48,8 +62,21 @@ export default function Preview({ data, template }: PreviewProps) {
   };
 
   return (
-    <Box>
-      {getTemplate()}
+    <Box ref={ref} style={{ width: '100%', overflow: 'hidden' }}>
+      <Box
+        style={{
+          width: TARGET_WIDTH,
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          // Adjust height of the container to match scaled height
+          // A4 aspect ratio is approx 1:1.414, so height is TARGET_WIDTH * 1.414
+          // Scaled height is (TARGET_WIDTH * 1.414) * scale
+          marginBottom: `calc(${TARGET_WIDTH * 1.414 * scale}px - ${TARGET_WIDTH * 1.414}px)`,
+          transition: 'transform 0.2s ease',
+        }}
+      >
+        {getTemplate()}
+      </Box>
     </Box>
   );
 }

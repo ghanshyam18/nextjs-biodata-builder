@@ -78,11 +78,11 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript defaultColorScheme="auto" />
+        <ColorSchemeScript defaultColorScheme="light" forceColorScheme="light" />
         {/* Hydration fix for browser extensions like ColorZilla (cz-shortcut-listen mismatch) */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `
+             __html: `
               (function() {
                 function cleanup() {
                   if (document.body && document.body.hasAttribute('cz-shortcut-listen')) {
@@ -100,7 +100,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
-        <MantineProvider theme={theme} defaultColorScheme="auto">
+        <MantineProvider theme={theme} defaultColorScheme="light" forceColorScheme="light">
           <Notifications position="top-right" zIndex={2000} />
           {children}
         </MantineProvider>

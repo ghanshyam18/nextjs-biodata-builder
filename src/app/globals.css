@@ -119,8 +119,6 @@ h1, h2, h3, h4, h5, h6 {
   background-color: white;
   width: 100%;
   max-width: 800px;
-  min-height: 1131px;
-  overflow: hidden;
 }
 @media (min-width: 768px) {
   .mobile-page {
