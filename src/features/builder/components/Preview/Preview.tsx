@@ -6,46 +6,41 @@ import { Box, Center, Loader } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { inter, outfit } from '../../../../shared/fonts';
+import { A4_WIDTH_PX, A4_ASPECT_RATIO } from '../../../../shared/constants/dimensions';
 
 import TraditionalTemplate from '../../../../components/templates/Traditional';
-
-const ModernTemplate = dynamic(() => import('../../../../components/templates/Modern'), {
-  loading: () => <Center h={400}><Loader color="blue" /></Center>
-});
-const MinimalistTemplate = dynamic(() => import('../../../../components/templates/Minimalist'), {
-  loading: () => <Center h={400}><Loader color="blue" /></Center>
-});
-const FloralTemplate = dynamic(() => import('../../../../components/templates/Floral'), {
-  loading: () => <Center h={400}><Loader color="blue" /></Center>
-});
-const ElegantTemplate = dynamic(() => import('../../../../components/templates/Elegant'), {
-  loading: () => <Center h={400}><Loader color="blue" /></Center>
-});
-const ClassicTemplate = dynamic(() => import('../../../../components/templates/Classic'), {
-  loading: () => <Center h={400}><Loader color="blue" /></Center>
-});
+import ModernTemplate from '../../../../components/templates/Modern';
+import MinimalistTemplate from '../../../../components/templates/Minimalist';
+import FloralTemplate from '../../../../components/templates/Floral';
+import ElegantTemplate from '../../../../components/templates/Elegant';
+import ClassicTemplate from '../../../../components/templates/Classic';
 
 interface PreviewProps {
   data: BiodataData;
   template: TemplateStyle;
+  isPrint?: boolean;
 }
 
-export default function Preview({ data, template }: PreviewProps) {
+export default function Preview({ data, template, isPrint = false }: PreviewProps) {
   const { ref, width } = useElementSize();
   const [scale, setScale] = useState(1);
   const [isReady, setIsReady] = useState(false);
-  const TARGET_WIDTH = 800;
-  const ASPECT_RATIO = 1.414; // A4 aspect ratio
+  const TARGET_WIDTH = A4_WIDTH_PX;
+  const ASPECT_RATIO = A4_ASPECT_RATIO;
 
   useEffect(() => {
+    if (isPrint) {
+      setScale(1);
+      setIsReady(true);
+      return;
+    }
     if (width > 0) {
       const newScale = Math.min(1, width / TARGET_WIDTH);
       setScale(newScale);
-      // Give a tiny delay to ensure the browser has applied the dimensions
       const timer = setTimeout(() => setIsReady(true), 50);
       return () => clearTimeout(timer);
     }
-  }, [width]);
+  }, [width, isPrint]);
 
   const getTemplate = () => {
     switch (template) {
@@ -79,7 +74,7 @@ export default function Preview({ data, template }: PreviewProps) {
           width: TARGET_WIDTH,
           minHeight: TARGET_WIDTH * ASPECT_RATIO,
           position: 'relative',
-          transform: `scale(${scale})`,
+          transform: isPrint ? 'none' : `scale(${scale})`,
           transformOrigin: 'top left',
           // No transition on transform here to avoid the "shrinking" animation on first load
         }}

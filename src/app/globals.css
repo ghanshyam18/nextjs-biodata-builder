@@ -129,42 +129,31 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Print ── */
 @media print {
-  body {
-    overflow: visible;
-    background: white;
-  }
-  .top-tab-bar,
-  .bottom-action-bar {
-    display: none !important;
-  }
-  .mobile-page,
-  .preview-container {
-    box-shadow: none;
-    border-radius: 0;
-    margin: 0;
-    width: 100% !important;
-    min-height: 100% !important;
-    font-family: 'Inter', sans-serif !important;
-    background: white !important;
-  }
-  .preview-content {
-    transform: none !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  .preview-content * {
-    font-family: 'Inter', sans-serif !important;
-  }
-  .preview-content h1, 
-  .preview-content h2, 
-  .preview-content h3, 
-  .preview-content h4,
-  .preview-content [style*="fontFamily: var(--font-outfit)"] {
-    font-family: 'Outfit', sans-serif !important;
-  }
   @page {
-    margin: 0cm;
     size: A4 portrait;
+    margin: 0;
+  }
+  
+  /* Hide EVERYTHING by default during print */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show ONLY the print-container and its contents */
+  .print-container, 
+  .print-container * {
+    visibility: visible !important;
+  }
+
+  .print-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
   }
 }
