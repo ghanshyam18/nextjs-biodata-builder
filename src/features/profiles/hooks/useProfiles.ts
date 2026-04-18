@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { SavedProfile, BiodataData, TemplateStyle } from '../../../shared/types';
 import { getSavedProfiles, saveProfile, deleteProfile, updateProfile } from '../../../shared/utils/storage';
 import { notifications } from '@mantine/notifications';
-import { Check, Trash2 } from 'lucide-react';
+import { Check, Trash2, Save, Info } from 'lucide-react';
 import React from 'react';
 
 export function useProfiles() {
@@ -26,19 +26,21 @@ export function useProfiles() {
     if (currentProfileId) {
       await updateProfile(currentProfileId, data, template);
       notifications.show({
-        title: 'Success',
-        message: 'Profile updated successfully!',
-        color: 'green',
-        icon: React.createElement(Check, { size: 16 }),
+        title: 'Profile Updated',
+        message: 'Your changes have been saved successfully.',
+        color: 'blue',
+        icon: React.createElement(Save, { size: 16 }),
+        position: 'top-center'
       });
     } else {
       const newProfile = await saveProfile(profileName, data, template);
       setCurrentProfileId(newProfile.id);
       notifications.show({
-        title: 'Success',
-        message: `${profileName} saved successfully!`,
+        title: 'Profile Saved',
+        message: `${profileName} is now stored locally.`,
         color: 'green',
         icon: React.createElement(Check, { size: 16 }),
+        position: 'top-center'
       });
     }
     await fetchProfiles();
@@ -49,10 +51,11 @@ export function useProfiles() {
     await fetchProfiles();
     if (currentProfileId === id) setCurrentProfileId(null);
     notifications.show({
-      title: 'Deleted',
-      message: 'Profile removed from your device.',
+      title: 'Profile Deleted',
+      message: 'The profile was removed from your storage.',
       color: 'red',
       icon: React.createElement(Trash2, { size: 16 }),
+      position: 'top-center'
     });
   }, [currentProfileId, fetchProfiles]);
 
