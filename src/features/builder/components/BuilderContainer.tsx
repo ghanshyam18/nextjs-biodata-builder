@@ -49,9 +49,10 @@ export default function BuilderContainer() {
   } = useProfiles();
 
   const componentRef = useRef<HTMLDivElement>(null);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
-    contentRef: componentRef,
+    contentRef: printRef,
     documentTitle: `Biodata_${form.getValues().personalDetails.fullName || 'New'}`,
   });
 
@@ -242,13 +243,20 @@ export default function BuilderContainer() {
             >
               <ScrollArea h="100%" scrollbars="y">
                 <Flex justify="center" p={{ base: 'xs', sm: 'lg' }} pb={80}>
-                  <div ref={componentRef} className="mobile-page">
+                  <div className="mobile-page">
                     <Preview data={previewData} template={template} />
                   </div>
                 </Flex>
               </ScrollArea>
             </Box>
           </Flex>
+
+          {/* Hidden Print Container: Physically 1:1 A4 for high-quality capture */}
+          <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
+            <div ref={printRef} className="print-container">
+              <Preview data={previewData} template={template} isPrint />
+            </div>
+          </div>
 
           {/* Mobile bottom action bar */}
           <div className="bottom-action-bar">
