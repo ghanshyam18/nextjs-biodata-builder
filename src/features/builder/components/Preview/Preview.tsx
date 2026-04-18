@@ -5,6 +5,7 @@ import type { BiodataData, TemplateStyle } from '../../../../shared/types';
 import { Box, Center, Loader } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
+import { inter, outfit } from '../../../../shared/fonts';
 
 import TraditionalTemplate from '../../../../components/templates/Traditional';
 
@@ -32,6 +33,7 @@ interface PreviewProps {
 export default function Preview({ data, template }: PreviewProps) {
   const { ref, width } = useElementSize();
   const [scale, setScale] = useState(1);
+  const [isReady, setIsReady] = useState(false);
   const TARGET_WIDTH = 800;
   const ASPECT_RATIO = 1.414; // A4 aspect ratio
 
@@ -39,6 +41,9 @@ export default function Preview({ data, template }: PreviewProps) {
     if (width > 0) {
       const newScale = Math.min(1, width / TARGET_WIDTH);
       setScale(newScale);
+      // Give a tiny delay to ensure the browser has applied the dimensions
+      const timer = setTimeout(() => setIsReady(true), 50);
+      return () => clearTimeout(timer);
     }
   }, [width]);
 
@@ -57,15 +62,26 @@ export default function Preview({ data, template }: PreviewProps) {
   const scaledHeight = TARGET_WIDTH * ASPECT_RATIO * scale;
 
   return (
-    <Box ref={ref} style={{ width: '100%', minHeight: scaledHeight }}>
+    <Box 
+      ref={ref} 
+      className={`preview-container ${inter.className} ${outfit.variable}`}
+      style={{ 
+        width: '100%', 
+        minHeight: scaledHeight,
+        opacity: isReady ? 1 : 0,
+        transition: 'opacity 0.2s ease',
+        fontFamily: "'Inter', sans-serif", // Direct fallback for print engines
+      }}
+    >
       <Box
+        className="preview-content"
         style={{
           width: TARGET_WIDTH,
           minHeight: TARGET_WIDTH * ASPECT_RATIO,
           position: 'relative',
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
-          transition: 'transform 0.1s ease',
+          // No transition on transform here to avoid the "shrinking" animation on first load
         }}
       >
         {getTemplate()}

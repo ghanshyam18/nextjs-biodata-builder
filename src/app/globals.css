@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap");
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -136,12 +137,31 @@ h1, h2, h3, h4, h5, h6 {
   .bottom-action-bar {
     display: none !important;
   }
-  .mobile-page {
+  .mobile-page,
+  .preview-container {
     box-shadow: none;
     border-radius: 0;
     margin: 0;
-    width: 100%;
-    min-height: 100%;
+    width: 100% !important;
+    min-height: 100% !important;
+    font-family: 'Inter', sans-serif !important;
+    background: white !important;
+  }
+  .preview-content {
+    transform: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .preview-content * {
+    font-family: 'Inter', sans-serif !important;
+  }
+  .preview-content h1, 
+  .preview-content h2, 
+  .preview-content h3, 
+  .preview-content h4,
+  .preview-content [style*="fontFamily: var(--font-outfit)"] {
+    font-family: 'Outfit', sans-serif !important;
   }
   @page {
     margin: 0cm;

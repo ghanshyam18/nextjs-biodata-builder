@@ -4,6 +4,7 @@ import { Suspense, useCallback, useState, useRef, memo } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { Edit3, Eye, Printer, Save } from 'lucide-react';
 import { AppShell, Flex, Box, ScrollArea, Select, Button, Group } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 import Editor from './Editor/Editor';
 import Preview from './Preview/Preview';
@@ -56,7 +57,15 @@ export default function BuilderContainer() {
 
   const onSaveClick = useCallback(async () => {
     const result = await form.validate();
-    if (result.hasErrors) return;
+    if (result.hasErrors) {
+      notifications.show({
+        title: 'Validation Failed',
+        message: 'Please fill in the required fields highlighted in the form.',
+        color: 'red',
+        position: 'top-center'
+      });
+      return;
+    }
     
     if (currentProfileId) {
       handleSave('', form.getValues(), template);
@@ -67,7 +76,16 @@ export default function BuilderContainer() {
 
   const onPrintClick = useCallback(async () => {
     const result = await form.validate();
-    if (!result.hasErrors) handlePrint();
+    if (result.hasErrors) {
+      notifications.show({
+        title: 'Form Incomplete',
+        message: 'Fill the required fields (like Name) to generate a valid preview and PDF.',
+        color: 'red',
+        position: 'top-center'
+      });
+      return;
+    }
+    handlePrint();
   }, [form, handlePrint]);
 
   const handleLoadProfile = useCallback((profile: SavedProfile) => {
