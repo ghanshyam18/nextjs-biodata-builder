@@ -1,19 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
 import BuilderContainer from '../features/builder/components/BuilderContainer';
-
-// Font optimization: Preload premium fonts to avoid layout shift
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const outfit = Outfit({ 
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
 
 // SEO Metadata API: Enterprise-standard SEO
 export const metadata: Metadata = {
@@ -41,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className={`${inter.variable} ${outfit.variable}`}>
+    <main>
        <BuilderContainer />
     </main>
   );

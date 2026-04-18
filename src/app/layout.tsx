@@ -1,13 +1,30 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import './globals.css';
-import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps, Input } from '@mantine/core';
+import { ColorSchemeScript, MantineProvider, createTheme, mantineHtmlProps } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Metadata } from 'next';
+import { Inter, Outfit } from 'next/font/google';
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const outfit = Outfit({ 
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  display: 'swap',
+});
 
 const theme = createTheme({
   primaryColor: 'blue',
   defaultRadius: 'md',
+  fontFamily: 'var(--font-inter), sans-serif',
+  headings: {
+    fontFamily: 'var(--font-outfit), var(--font-inter), sans-serif',
+  },
   components: {
     Button: {
       defaultProps: { fw: 600 },
@@ -82,7 +99,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning>
+      <body className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="auto">
           <Notifications position="top-right" zIndex={2000} />
           {children}
