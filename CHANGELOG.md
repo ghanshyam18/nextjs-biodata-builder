@@ -1,42 +1,30 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file.
 
-## 1.3.0 (2026-04-18)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-04-18
 
-### Features
+### Added
+- **Changelog Autopilot**: Integrated `standard-version`, `commitlint`, and `husky` for automated versioning and professional commit tracking.
+- **Enterprise Linting**: Transitioned to ESLint 9 Flat Config with Next.js and TypeScript optimizations.
 
-* automate changelog generation and simplify select component UX ([20bc6f6](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/20bc6f634316d1639a1b86470a6857e3baf9235b))
-* implement dedicated print container with A4 dimensions for high-fidelity PDF exports ([f09e6a4](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/f09e6a4f54f3c5cb4e6f97aecae220213f2b069d))
-
-
-### Bug Fixes
-
-* ensure preview visibility by providing explicit minimum height ([ae84236](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/ae84236ae8749482309eb0f0e5fe4a29feb2ca60))
-* optimize global font integration and align Mantine theme for production ([c8cc8e1](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/c8cc8e1fd3a3fe831a2367e4bfbf1491b99f99c2))
-* resolve theme inconsistency and mobile preview overlap ([87a660c](https://github.com/ghanshyam18/nextjs-biodata-builder/commit/87a660c66c7e7de7f69f3b59a4be16f863ccc778))
+### Fixed
+- **Input Performance**: Eliminated UI lag by implementing component memoization and debounced form state syncing.
+- **Mobile UX Refinement**: Removed unnecessary `searchable` search bars from mobile selectors to prevent keyboard popup interference.
+- **Time Entry**: Refactored Time of Birth to allow direct numeric input for faster data entry.
+- **Print Screen View**: Strengthened A4 print consistency across different browser scaling factors.
 
 ## [1.0.0] - 2026-04-18
 
 ### Added
-- **Enterprise Architecture**: Transitioned to a feature-based structure (`src/features`, `src/shared`).
-- **Zod Validation**: Robust schema-based form validation for all biodata fields.
-- **Dynamic Template Loading**: Initial implementation of lazy-loading templates using `next/dynamic` for performance.
-- **Profiles Management**: Ability to save, load, and delete multiple biodata profiles via `localforage`.
-- **SEO Optimization**: Metadata API integration, `robots.ts`, and `sitemap.ts` for professional search engine presence.
-- **Premium Typography**: Integration of `Inter` and `Outfit` via `next/font/google`.
-- **Git Initialization**: Formal repository structure with optimized `.gitignore`.
-
-### Fixed
-- **Font Flickering**: Resolved layout shift by moving font definitions to the root layout and Mantine theme.
-- **Action Reliability**: Fixed `crypto.randomUUID` dependency to support non-secure (HTTP/IP) environments.
-- **Live Preview Sync**: Improved reactivity of the preview section in uncontrolled form mode.
-
-### Changed
-- **Form Management**: Refactored from monolithic state to a focused `useBiodataForm` custom hook.
-- **Layout**: Standardized common UI elements into `src/shared/components/layout`.
+- **Core Architecture**: Transitioned to a feature-based structure for scalability.
+- **Data Persistence**: Integrated `localforage` for multi-profile management via IndexedDB.
+- **Mantine UI Integration**: Established a premium design system with 6 professional templates.
+- **SEO & Performance**: Optimized meta-tags, professional typography (`Inter`/`Outfit`), and static export capabilities.
 
 ---
-
+[1.2.0]: https://github.com/ghanshyam18/nextjs-biodata-builder/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/ghanshyam18/nextjs-biodata-builder/releases/tag/v1.0.0

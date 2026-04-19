@@ -1,10 +1,18 @@
-import { defineConfig } from "eslint/config";
+import nextPlugin from "@next/eslint-plugin-next";
 import tseslint from "typescript-eslint";
 
-export default defineConfig([
+const eslintConfig = [
   ...tseslint.configs.recommended,
   {
-    files: ["src/**/*.{ts,tsx}"],
+    plugins: {
+      "@next/next": nextPlugin,
+    },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules,
+    },
+  },
+  {
     rules: {
       "no-unused-vars": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
@@ -13,5 +21,7 @@ export default defineConfig([
   },
   {
     ignores: [".next/", "out/", "node_modules/"],
-  }
-]);
+  },
+];
+
+export default eslintConfig;
