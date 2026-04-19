@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { Button, Group, Modal, Text, TextInput } from '@mantine/core';
 import { Save } from 'lucide-react';
-import { Modal, TextInput, Button, Text, Group } from '@mantine/core';
+import { useEffect, useState } from 'react';
 
 interface SaveModalProps {
   isOpen: boolean;
@@ -48,7 +48,9 @@ export default function SaveModal({ isOpen, initialName, onSave, onClose }: Save
           required
         />
         <Group justify="flex-end">
-          <Button variant="default" onClick={onClose}>Cancel</Button>
+          <Button variant="default" onClick={onClose}>
+            Cancel
+          </Button>
           <Button type="submit">Save Profile</Button>
         </Group>
       </form>

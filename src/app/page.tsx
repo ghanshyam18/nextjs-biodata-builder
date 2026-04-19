@@ -1,11 +1,19 @@
 import type { Metadata } from 'next';
+
 import BuilderContainer from '../features/builder/components/BuilderContainer';
 
 // SEO Metadata API: Enterprise-standard SEO
 export const metadata: Metadata = {
   title: 'Professional Biodata Builder | Create & Save Biodata for Marriage',
-  description: 'Create beautiful, printable marriage biodata in minutes. Choose from elegant templates, save multiple profiles, and download as high-quality PDF. Privacy-first, local storage used.',
-  keywords: ['biodata builder', 'marriage biodata', 'matrimonial biodata', 'pdf biodata', 'online biodata creator'],
+  description:
+    'Create beautiful, printable marriage biodata in minutes. Choose from elegant templates, save multiple profiles, and download as high-quality PDF. Privacy-first, local storage used.',
+  keywords: [
+    'biodata builder',
+    'marriage biodata',
+    'matrimonial biodata',
+    'pdf biodata',
+    'online biodata creator',
+  ],
   openGraph: {
     title: 'Professional Biodata Builder',
     description: 'Create & Save beautiful marriage biodata with ease.',
@@ -22,13 +30,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-  }
+  },
 };
 
 export default function Home() {
   return (
     <main>
-       <BuilderContainer />
+      <BuilderContainer />
     </main>
   );
 }

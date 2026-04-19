@@ -1,5 +1,7 @@
-import type { BiodataData } from "../../shared/types";
-import { Box, Flex, Text, Title, SimpleGrid } from '@mantine/core';
+import { Box, Flex, SimpleGrid, Text, Title } from '@mantine/core';
+import Image from 'next/image';
+
+import type { BiodataData } from '../../shared/types';
 
 interface TemplateProps {
   data: BiodataData;
@@ -10,7 +12,12 @@ const MinimalistTemplate: React.FC<TemplateProps> = ({ data }) => {
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
-    try { const [y, m, d] = dateStr.split('-'); return `${d}-${m}-${y}`; } catch { return dateStr; }
+    try {
+      const [y, m, d] = dateStr.split('-');
+      return `${d}-${m}-${y}`;
+    } catch {
+      return dateStr;
+    }
   };
 
   const formatTime = (timeStr: string) => {
@@ -20,38 +27,83 @@ const MinimalistTemplate: React.FC<TemplateProps> = ({ data }) => {
       const period = h >= 12 ? 'PM' : 'AM';
       const hour12 = h % 12 || 12;
       return `${hour12}:${m.toString().padStart(2, '0')} ${period}`;
-    } catch { return timeStr; }
+    } catch {
+      return timeStr;
+    }
   };
 
   const DetailItem = ({ label, value }: { label: string; value: string }) => {
     if (!value) return null;
     return (
       <Box mb={12}>
-        <Text size="xs" tt="uppercase" lts={2} c="gray.6" fw={600} mb={2}>{label}</Text>
-        <Text c="gray.9" fw={500} size="sm" lh="snug">{value}</Text>
+        <Text size="xs" tt="uppercase" lts={2} c="gray.6" fw={600} mb={2}>
+          {label}
+        </Text>
+        <Text c="gray.9" fw={500} size="sm" lh="snug">
+          {value}
+        </Text>
       </Box>
     );
   };
 
   const SectionTitle = ({ title }: { title: string }) => (
-    <Title order={3} size="h6" fw={300} c="gray.9" mb="md" mt={28} pb={6} style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}>{title}</Title>
+    <Title
+      order={3}
+      size="h6"
+      fw={300}
+      c="gray.9"
+      mb="md"
+      mt={28}
+      pb={6}
+      style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}
+    >
+      {title}
+    </Title>
   );
 
   return (
     <Box style={{ minHeight: '100%', backgroundColor: 'white' }} p={24}>
-      <Flex gap={16} align="flex-start" mb={32} pb={24} style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}>
+      <Flex
+        gap={16}
+        align="flex-start"
+        mb={32}
+        pb={24}
+        style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}
+      >
         <Box flex={1}>
-          <Title order={1} size="h2" fw={300} style={{ letterSpacing: '-0.02em' }} c="gray.9" mb={4}>
+          <Title
+            order={1}
+            size="h2"
+            fw={300}
+            style={{ letterSpacing: '-0.02em' }}
+            c="gray.9"
+            mb={4}
+          >
             {personalDetails.fullName || 'Name Surname'}
           </Title>
-          <Text size="md" c="gray.6" fw={300}>Biodata</Text>
+          <Text size="md" c="gray.6" fw={300}>
+            Biodata
+          </Text>
           <Box c="gray.6" size="sm" mt={12} style={{ lineHeight: 1.6 }}>
             {contactDetails.mobileNumber && <Text>{contactDetails.mobileNumber}</Text>}
             {contactDetails.email && <Text>{contactDetails.email}</Text>}
           </Box>
         </Box>
         {personalDetails.photo && (
-          <img src={personalDetails.photo} alt="Profile" style={{ width: 80, height: 96, objectFit: 'cover', border: '1px solid var(--mantine-color-gray-3)', flexShrink: 0 }} />
+          <Image
+            src={personalDetails.photo}
+            alt="Profile"
+            width={80}
+            height={96}
+            unoptimized
+            style={{
+              width: 80,
+              height: 96,
+              objectFit: 'cover',
+              border: '1px solid var(--mantine-color-gray-3)',
+              flexShrink: 0,
+            }}
+          />
         )}
       </Flex>
 
@@ -101,7 +153,9 @@ const MinimalistTemplate: React.FC<TemplateProps> = ({ data }) => {
         {contactDetails.address && (
           <>
             <SectionTitle title="Address" />
-            <Text c="gray.8" style={{ lineHeight: 1.6 }} fw={500} size="sm">{contactDetails.address}</Text>
+            <Text c="gray.8" style={{ lineHeight: 1.6 }} fw={500} size="sm">
+              {contactDetails.address}
+            </Text>
           </>
         )}
       </Box>

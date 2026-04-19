@@ -1,7 +1,19 @@
-import { Trash2, FileText, Search, Clock, PlusCircle } from 'lucide-react';
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Card,
+  Center,
+  Drawer,
+  Group,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { Clock, FileText, PlusCircle, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+
 import type { SavedProfile } from '../../../shared/types';
-import { Drawer, TextInput, Button, ActionIcon, Text, Group, Box, Center, Card, Stack } from '@mantine/core';
 
 interface ProfileSidebarProps {
   isOpen: boolean;
@@ -18,23 +30,26 @@ export default function ProfileSidebar({
   profiles,
   onLoad,
   onDelete,
-  onNew
+  onNew,
 }: ProfileSidebarProps) {
   const [search, setSearch] = useState('');
 
-  const filteredProfiles = profiles.filter(p => 
-    p.profileName.toLowerCase().includes(search.toLowerCase()) ||
-    p.data.personalDetails.fullName.toLowerCase().includes(search.toLowerCase())
+  const filteredProfiles = profiles.filter(
+    (p) =>
+      p.profileName.toLowerCase().includes(search.toLowerCase()) ||
+      p.data.personalDetails.fullName.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <Drawer 
-      opened={isOpen} 
+    <Drawer
+      opened={isOpen}
       onClose={onClose}
       title={
         <Group gap="xs" align="center">
           <Clock size={20} color="var(--mantine-color-blue-7)" style={{ display: 'flex' }} />
-          <Text fw={700} fz="sm">SAVED PROFILES</Text>
+          <Text fw={700} fz="sm">
+            SAVED PROFILES
+          </Text>
         </Group>
       }
       padding="md"
@@ -43,9 +58,9 @@ export default function ProfileSidebar({
     >
       <Stack h="calc(100vh - 80px)" gap="md">
         <Box>
-          <Button 
-            fullWidth 
-            variant="light" 
+          <Button
+            fullWidth
+            variant="light"
             leftSection={<PlusCircle size={16} />}
             onClick={onNew}
             mb="md"
@@ -64,27 +79,33 @@ export default function ProfileSidebar({
           <Center flex={1} style={{ flexDirection: 'column' }}>
             <FileText size={48} color="var(--mantine-color-gray-3)" style={{ marginBottom: 16 }} />
             <Text size="sm" c="dimmed" ta="center">
-              {search ? 'No profiles found matching your search.' : 'No saved profiles yet. Click save to see them here!'}
+              {search
+                ? 'No profiles found matching your search.'
+                : 'No saved profiles yet. Click save to see them here!'}
             </Text>
           </Center>
         ) : (
           <Box flex={1} style={{ overflowY: 'auto' }}>
             <Stack gap="xs">
               {filteredProfiles.map((p) => (
-                <Card 
-                  key={p.id} 
-                  withBorder 
-                  shadow="sm" 
-                  p="sm" 
+                <Card
+                  key={p.id}
+                  withBorder
+                  shadow="sm"
+                  p="sm"
                   style={{ cursor: 'pointer', transition: 'border-color 0.2s ease' }}
                   onClick={() => onLoad(p)}
                 >
                   <Group justify="space-between" align="center" wrap="nowrap">
                     <Box style={{ overflow: 'hidden' }}>
-                      <Text fw={600} truncate>{p.profileName}</Text>
+                      <Text fw={600} truncate>
+                        {p.profileName}
+                      </Text>
                       <Group gap={4} mt={4}>
                         <Clock size={12} color="var(--mantine-color-gray-5)" />
-                        <Text size="xs" c="dimmed">{new Date(p.updatedAt).toLocaleDateString()}</Text>
+                        <Text size="xs" c="dimmed">
+                          {new Date(p.updatedAt).toLocaleDateString()}
+                        </Text>
                       </Group>
                       {p.data.personalDetails.fullName && (
                         <Text size="xs" c="gray.5" truncate fs="italic" mt={2}>
@@ -92,9 +113,9 @@ export default function ProfileSidebar({
                         </Text>
                       )}
                     </Box>
-                    <ActionIcon 
-                      color="red" 
-                      variant="subtle" 
+                    <ActionIcon
+                      color="red"
+                      variant="subtle"
                       onClick={(e) => {
                         e.stopPropagation();
                         onDelete(p.id);

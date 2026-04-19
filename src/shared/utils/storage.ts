@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+
 import type { BiodataData, SavedProfile, TemplateStyle } from '../types';
 
 const generateId = () => {
@@ -13,7 +14,7 @@ const STORAGE_KEY = 'biodata_explorer_profiles';
 // Initialize localforage configuration
 localforage.config({
   name: 'BiodataBuilder',
-  storeName: 'profiles' 
+  storeName: 'profiles',
 });
 
 export const getSavedProfiles = async (): Promise<SavedProfile[]> => {

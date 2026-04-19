@@ -1,5 +1,7 @@
-import type { BiodataData } from "../../shared/types";
-import { Box, Flex, Text, Title, Divider } from '@mantine/core';
+import { Box, Divider, Flex, Text, Title } from '@mantine/core';
+import Image from 'next/image';
+
+import type { BiodataData } from '../../shared/types';
 
 interface TemplateProps {
   data: BiodataData;
@@ -13,7 +15,12 @@ const TraditionalTemplate: React.FC<TemplateProps> = ({ data }) => {
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '';
-    try { const [y, m, d] = dateStr.split('-'); return `${d}-${m}-${y}`; } catch { return dateStr; }
+    try {
+      const [y, m, d] = dateStr.split('-');
+      return `${d}-${m}-${y}`;
+    } catch {
+      return dateStr;
+    }
   };
 
   const formatTime = (timeStr: string) => {
@@ -23,7 +30,9 @@ const TraditionalTemplate: React.FC<TemplateProps> = ({ data }) => {
       const period = h >= 12 ? 'PM' : 'AM';
       const hour12 = h % 12 || 12;
       return `${hour12}:${m.toString().padStart(2, '0')} ${period}`;
-    } catch { return timeStr; }
+    } catch {
+      return timeStr;
+    }
   };
 
   const Row = ({ label, value }: { label: string; value: string }) => {
@@ -33,18 +42,30 @@ const TraditionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         <Text span fw={600} fz={13} lh="snug" c={NAVY} w={140} miw={140} style={{ flexShrink: 0 }}>
           {label}
         </Text>
-        <Text span fw={600} fz={13} c={NAVY} mr="xs">:</Text>
-        <Text span fw={400} fz={13} lh="snug" c={NAVY}>{value}</Text>
+        <Text span fw={600} fz={13} c={NAVY} mr="xs">
+          :
+        </Text>
+        <Text span fw={400} fz={13} lh="snug" c={NAVY}>
+          {value}
+        </Text>
       </Flex>
     );
   };
 
   return (
-    <Box pos="relative" bg="#ffffff" p={12} style={{ minHeight: '100%', fontFamily: 'var(--mantine-font-family)' }}>
+    <Box
+      pos="relative"
+      bg="#ffffff"
+      p={12}
+      style={{ minHeight: '100%', fontFamily: 'var(--mantine-font-family)' }}
+    >
       {/* Outer gold border */}
       <Box
         pos="absolute"
-        top={12} left={12} right={12} bottom={12}
+        top={12}
+        left={12}
+        right={12}
+        bottom={12}
         style={{
           border: `2.5px solid ${GOLD}`,
           borderRadius: 8,
@@ -54,7 +75,10 @@ const TraditionalTemplate: React.FC<TemplateProps> = ({ data }) => {
       {/* Inner gold border */}
       <Box
         pos="absolute"
-        top={18} left={18} right={18} bottom={18}
+        top={18}
+        left={18}
+        right={18}
+        bottom={18}
         style={{
           border: `1px solid ${GOLD}`,
           borderRadius: 4,
@@ -81,10 +105,21 @@ const TraditionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             <Row label="Weight" value={personalDetails.weight} />
           </Box>
           {personalDetails.photo && (
-            <Box style={{ flexShrink: 0, width: 100, border: `2px solid ${GOLD}`, padding: 3, background: '#f9f6ee' }}>
-              <img
+            <Box
+              style={{
+                flexShrink: 0,
+                width: 100,
+                border: `2px solid ${GOLD}`,
+                padding: 3,
+                background: '#f9f6ee',
+              }}
+            >
+              <Image
                 src={personalDetails.photo}
                 alt="Profile"
+                width={100}
+                height={120}
+                unoptimized
                 style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }}
               />
             </Box>

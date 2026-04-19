@@ -5,26 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-04-18
+
+### Added
+- **Changelog Autopilot**: Integrated `standard-version`, `commitlint`, and `husky` for automated versioning and professional commit tracking.
+- **Enterprise Linting**: Transitioned to ESLint 9 Flat Config with Next.js and TypeScript optimizations.
+
+### Fixed
+- **Input Performance**: Eliminated UI lag by implementing component memoization and debounced form state syncing.
+- **Mobile UX Refinement**: Removed unnecessary `searchable` search bars from mobile selectors to prevent keyboard popup interference.
+- **Time Entry**: Refactored Time of Birth to allow direct numeric input for faster data entry.
+- **Print Screen View**: Strengthened A4 print consistency across different browser scaling factors.
+
 ## [1.0.0] - 2026-04-18
 
 ### Added
-- **Enterprise Architecture**: Transitioned to a feature-based structure (`src/features`, `src/shared`).
-- **Zod Validation**: Robust schema-based form validation for all biodata fields.
-- **Dynamic Template Loading**: Initial implementation of lazy-loading templates using `next/dynamic` for performance.
-- **Profiles Management**: Ability to save, load, and delete multiple biodata profiles via `localforage`.
-- **SEO Optimization**: Metadata API integration, `robots.ts`, and `sitemap.ts` for professional search engine presence.
-- **Premium Typography**: Integration of `Inter` and `Outfit` via `next/font/google`.
-- **Git Initialization**: Formal repository structure with optimized `.gitignore`.
-
-### Fixed
-- **Font Flickering**: Resolved layout shift by moving font definitions to the root layout and Mantine theme.
-- **Action Reliability**: Fixed `crypto.randomUUID` dependency to support non-secure (HTTP/IP) environments.
-- **Live Preview Sync**: Improved reactivity of the preview section in uncontrolled form mode.
-
-### Changed
-- **Form Management**: Refactored from monolithic state to a focused `useBiodataForm` custom hook.
-- **Layout**: Standardized common UI elements into `src/shared/components/layout`.
+- **Core Architecture**: Transitioned to a feature-based structure for scalability.
+- **Data Persistence**: Integrated `localforage` for multi-profile management via IndexedDB.
+- **Mantine UI Integration**: Established a premium design system with 6 professional templates.
+- **SEO & Performance**: Optimized meta-tags, professional typography (`Inter`/`Outfit`), and static export capabilities.
 
 ---
-
+[1.2.0]: https://github.com/ghanshyam18/nextjs-biodata-builder/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/ghanshyam18/nextjs-biodata-builder/releases/tag/v1.0.0
