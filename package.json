@@ -11,6 +11,7 @@
     "lint": "eslint src --config eslint.config.mjs",
     "lint:fix": "eslint src --config eslint.config.mjs --fix",
     "format": "prettier --write .",
+    "lint-staged": "lint-staged",
     "release": "standard-version",
     "prepare": "husky"
   },
@@ -46,6 +47,7 @@
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "postcss": "^8.5.10",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
@@ -53,5 +55,14 @@
     "standard-version": "^9.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
   }
 }
