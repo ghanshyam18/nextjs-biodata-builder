@@ -1,9 +1,10 @@
 import { useForm } from '@mantine/form';
 import { zodResolver } from 'mantine-form-zod-resolver';
-import { useEffect, useState, useCallback } from 'react';
-import { biodataSchema, type BiodataFormValues } from '../schemas/biodataSchema';
+import { useCallback, useEffect, useState } from 'react';
+
 import { initialBiodataState } from '../../../shared/constants/initialState';
 import { compressImage } from '../../../shared/utils/image';
+import { type BiodataFormValues, biodataSchema } from '../schemas/biodataSchema';
 
 export function useBiodataForm() {
   const [previewData, setPreviewData] = useState<BiodataFormValues>(initialBiodataState);
@@ -15,18 +16,17 @@ export function useBiodataForm() {
     onValuesChange: () => syncPreview(),
   });
 
-  const [lastUpdate, setLastUpdate] = useState(0);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Sync values to preview with debouncing to prevent lag
   const syncPreview = useCallback(() => {
     if (debounceTimer) clearTimeout(debounceTimer);
-    
+
     const timer = setTimeout(() => {
       const currentValues = form.getValues();
-      setPreviewData({...currentValues});
+      setPreviewData({ ...currentValues });
     }, 300); // 300ms debounce is optimal for responsiveness vs performance
-    
+
     setDebounceTimer(timer);
   }, [form, debounceTimer]);
 
@@ -67,7 +67,10 @@ export function useBiodataForm() {
     let hour = parseInt(h || '12');
     if (p === 'PM' && hour !== 12) hour += 12;
     if (p === 'AM' && hour === 12) hour = 0;
-    form.setFieldValue('personalDetails.timeOfBirth', `${String(hour).padStart(2, '0')}:${m || '00'}`);
+    form.setFieldValue(
+      'personalDetails.timeOfBirth',
+      `${String(hour).padStart(2, '0')}:${m || '00'}`
+    );
   };
 
   return {

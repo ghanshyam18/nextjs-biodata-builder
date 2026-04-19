@@ -37,5 +37,5 @@ export const initialBiodataState: BiodataData = {
     mobileNumber: '',
     email: '',
     address: '',
-  }
+  },
 };

@@ -3,7 +3,7 @@
  * Width: 210mm
  * Height: 297mm
  * Aspect Ratio: ~1.4142
- * 
+ *
  * At 96 DPI: ~794px x ~1123px
  */
 export const A4_WIDTH_PX = 794;

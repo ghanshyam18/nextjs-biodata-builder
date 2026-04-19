@@ -1,5 +1,6 @@
-import { Group, Select, Button, ActionIcon, Box, Title, Image } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Image, Select, Title } from '@mantine/core';
 import { History } from 'lucide-react';
+
 import type { TemplateStyle } from '../../types';
 
 interface HeaderActionsProps {
@@ -20,7 +21,15 @@ export default function HeaderActions({
       {/* Left: Brand */}
       <Group gap={8} wrap="nowrap" align="center">
         <Image src="/logo.svg" w={32} h={32} alt="Logo" />
-        <Title order={1} fz={{ base: 'md', sm: 'h5' }} fw={700} c="dark.8" style={{ whiteSpace: 'nowrap', lineHeight: 1 }}>Biodata Builder</Title>
+        <Title
+          order={1}
+          fz={{ base: 'md', sm: 'h5' }}
+          fw={700}
+          c="dark.8"
+          style={{ whiteSpace: 'nowrap', lineHeight: 1 }}
+        >
+          Biodata Builder
+        </Title>
       </Group>
 
       {/* Right: Template selector (desktop) + History */}
@@ -30,7 +39,7 @@ export default function HeaderActions({
             id="template-select-desktop"
             value={template}
             onChange={(e) => onTemplateChange((e as TemplateStyle) || 'traditional')}
-            data={templates.map(t => ({ value: t.id, label: t.name }))}
+            data={templates.map((t) => ({ value: t.id, label: t.name }))}
             w={160}
             size="sm"
             allowDeselect={false}

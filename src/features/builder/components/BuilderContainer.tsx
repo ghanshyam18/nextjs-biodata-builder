@@ -1,20 +1,20 @@
 'use client';
 
-import { Suspense, useCallback, useState, useRef, memo } from 'react';
-import { useReactToPrint } from 'react-to-print';
-import { Edit3, Eye, Printer, Save } from 'lucide-react';
-import { AppShell, Flex, Box, ScrollArea, Select, Button, Group } from '@mantine/core';
+import { AppShell, Box, Button, Flex, Group, ScrollArea, Select } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { Edit3, Eye, Printer, Save } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
+import { useReactToPrint } from 'react-to-print';
 
-import Editor from './Editor/Editor';
-import Preview from './Preview/Preview';
-import { useBiodataForm } from '../hooks/useBiodataForm';
-import { useProfiles } from '../../profiles/hooks/useProfiles';
 import HeaderActions from '../../../shared/components/layout/HeaderActions';
-import ProfileSidebar from '../../profiles/components/ProfileSidebar';
-import SaveModal from '../../profiles/components/SaveModal';
 import { initialBiodataState } from '../../../shared/constants/initialState';
 import type { SavedProfile, TemplateStyle } from '../../../shared/types';
+import ProfileSidebar from '../../profiles/components/ProfileSidebar';
+import SaveModal from '../../profiles/components/SaveModal';
+import { useProfiles } from '../../profiles/hooks/useProfiles';
+import { useBiodataForm } from '../hooks/useBiodataForm';
+import Editor from './Editor/Editor';
+import Preview from './Preview/Preview';
 
 const templates: { id: TemplateStyle; name: string }[] = [
   { id: 'traditional', name: '🔴 Traditional' },
@@ -31,24 +31,12 @@ export default function BuilderContainer() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
-  const {
-    form,
-    previewData,
-    handlePhotoChange,
-    removePhoto,
-    parseTime,
-    updateTime,
-  } = useBiodataForm();
+  const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime } =
+    useBiodataForm();
 
-  const {
-    profiles,
-    currentProfileId,
-    setCurrentProfileId,
-    handleSave,
-    handleDelete,
-  } = useProfiles();
+  const { profiles, currentProfileId, setCurrentProfileId, handleSave, handleDelete } =
+    useProfiles();
 
-  const componentRef = useRef<HTMLDivElement>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
@@ -64,7 +52,7 @@ export default function BuilderContainer() {
         title: 'Form Required',
         message: 'Please at least enter the Full Name before saving.',
         color: 'red',
-        position: 'top-center'
+        position: 'top-center',
       });
       return;
     }
@@ -76,7 +64,7 @@ export default function BuilderContainer() {
           title: 'Validation Failed',
           message: 'Please check the highlighted errors in the form.',
           color: 'red',
-          position: 'top-center'
+          position: 'top-center',
         });
         return;
       }
@@ -104,7 +92,7 @@ export default function BuilderContainer() {
         title: 'Name Required',
         message: 'Professional biodata requires at least a name to generate a valid PDF.',
         color: 'red',
-        position: 'top-center'
+        position: 'top-center',
       });
       return;
     }
@@ -116,7 +104,7 @@ export default function BuilderContainer() {
           title: 'Form Incomplete',
           message: 'Correct the errors before generating PDF.',
           color: 'red',
-          position: 'top-center'
+          position: 'top-center',
         });
         return;
       }
@@ -127,13 +115,16 @@ export default function BuilderContainer() {
     handlePrint();
   }, [form, handlePrint]);
 
-  const handleLoadProfile = useCallback((profile: SavedProfile) => {
-    form.setValues(profile.data);
-    setTemplate(profile.template);
-    setCurrentProfileId(profile.id);
-    setIsSidebarOpen(false);
-    setActiveTab('edit');
-  }, [form, setCurrentProfileId]);
+  const handleLoadProfile = useCallback(
+    (profile: SavedProfile) => {
+      form.setValues(profile.data);
+      setTemplate(profile.template);
+      setCurrentProfileId(profile.id);
+      setIsSidebarOpen(false);
+      setActiveTab('edit');
+    },
+    [form, setCurrentProfileId]
+  );
 
   const handleNewProfile = useCallback(() => {
     form.setValues(initialBiodataState);
@@ -142,10 +133,13 @@ export default function BuilderContainer() {
     setActiveTab('edit');
   }, [form, setCurrentProfileId]);
 
-  const onModalSave = useCallback((profileName: string) => {
-    handleSave(profileName, form.getValues(), template);
-    setIsSaveModalOpen(false);
-  }, [form, handleSave, template]);
+  const onModalSave = useCallback(
+    (profileName: string) => {
+      handleSave(profileName, form.getValues(), template);
+      setIsSaveModalOpen(false);
+    },
+    [form, handleSave, template]
+  );
 
   return (
     <>
@@ -177,12 +171,18 @@ export default function BuilderContainer() {
           />
 
           {/* Mobile template picker */}
-          <Box hiddenFrom="sm" px="sm" py={6} bg="white" style={{ borderBottom: '1px solid var(--mantine-color-gray-2)' }}>
+          <Box
+            hiddenFrom="sm"
+            px="sm"
+            py={6}
+            bg="white"
+            style={{ borderBottom: '1px solid var(--mantine-color-gray-2)' }}
+          >
             <Select
               id="template-select-mobile"
               value={template}
               onChange={(e) => setTemplate((e as TemplateStyle) || 'traditional')}
-              data={templates.map(t => ({ value: t.id, label: t.name }))}
+              data={templates.map((t) => ({ value: t.id, label: t.name }))}
               size="sm"
               allowDeselect={false}
             />
@@ -287,10 +287,7 @@ export default function BuilderContainer() {
               >
                 {currentProfileId ? 'Update' : 'Save'}
               </Button>
-              <Button
-                leftSection={<Printer size={16} />}
-                onClick={onPrintClick}
-              >
+              <Button leftSection={<Printer size={16} />} onClick={onPrintClick}>
                 Print / Save PDF
               </Button>
             </Group>

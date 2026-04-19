@@ -46,7 +46,13 @@ export interface BiodataData {
   contactDetails: ContactDetails;
 }
 
-export type TemplateStyle = 'traditional' | 'modern' | 'minimalist' | 'floral' | 'elegant' | 'classic';
+export type TemplateStyle =
+  | 'traditional'
+  | 'modern'
+  | 'minimalist'
+  | 'floral'
+  | 'elegant'
+  | 'classic';
 
 export interface SavedProfile {
   id: string;

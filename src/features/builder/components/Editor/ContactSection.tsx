@@ -1,9 +1,10 @@
-import { Phone } from 'lucide-react';
-import { Stack, SimpleGrid, TextInput, Textarea } from '@mantine/core';
-import { SectionWrapper } from './SectionWrapper';
+import { SimpleGrid, Stack, Textarea, TextInput } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
-import type { BiodataFormValues } from '../../schemas/biodataSchema';
+import { Phone } from 'lucide-react';
 import { memo } from 'react';
+
+import type { BiodataFormValues } from '../../schemas/biodataSchema';
+import { SectionWrapper } from './SectionWrapper';
 
 interface ContactSectionProps {
   form: UseFormReturnType<BiodataFormValues>;
@@ -14,8 +15,20 @@ export const ContactSection = memo(({ form }: ContactSectionProps) => {
     <SectionWrapper title="Contact Details" icon={<Phone size={18} />}>
       <Stack gap="sm">
         <SimpleGrid cols={{ base: 1, sm: 2 }}>
-          <TextInput type="tel" label="Mobile Number" placeholder="+91 9876543210" key={form.key('contactDetails.mobileNumber')} {...form.getInputProps('contactDetails.mobileNumber')} />
-          <TextInput type="email" label="Email Address" placeholder="rahul@example.com" key={form.key('contactDetails.email')} {...form.getInputProps('contactDetails.email')} />
+          <TextInput
+            type="tel"
+            label="Mobile Number"
+            placeholder="+91 9876543210"
+            key={form.key('contactDetails.mobileNumber')}
+            {...form.getInputProps('contactDetails.mobileNumber')}
+          />
+          <TextInput
+            type="email"
+            label="Email Address"
+            placeholder="rahul@example.com"
+            key={form.key('contactDetails.email')}
+            {...form.getInputProps('contactDetails.email')}
+          />
         </SimpleGrid>
         <Textarea
           label="Residential Address"
