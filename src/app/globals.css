@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap');
 *,
 *::before,
 *::after {
@@ -11,16 +10,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  font-family: var(--font-inter), sans-serif;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-outfit), var(--font-inter), sans-serif;
 }
 
 /* Desktop layout logic is now handled via Mantine props in BuilderContainer.tsx */

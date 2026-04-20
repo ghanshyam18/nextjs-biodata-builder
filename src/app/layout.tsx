@@ -7,7 +7,7 @@ import { Notifications } from '@mantine/notifications';
 import { Metadata } from 'next';
 
 import ErrorBoundary from '../shared/components/ErrorBoundary';
-import { inter, outfit } from '../shared/fonts';
+import { inter, outfit } from './fonts';
 
 const theme = createTheme({
   primaryColor: 'blue',
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`} {...mantineHtmlProps}>
+    <html lang="en" {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript defaultColorScheme="light" forceColorScheme="light" />
         {/* Hydration fix for browser extensions like ColorZilla (cz-shortcut-listen mismatch) */}
@@ -90,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light" forceColorScheme="light">
           <Notifications position="top-right" zIndex={2000} />
           <ErrorBoundary>{children}</ErrorBoundary>

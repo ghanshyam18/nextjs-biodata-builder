@@ -5,8 +5,8 @@ import { useElementSize } from '@mantine/hooks';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
+import { inter } from '../../../../app/fonts';
 import { A4_ASPECT_RATIO, A4_WIDTH_PX } from '../../../../shared/constants/dimensions';
-import { inter, outfit } from '../../../../shared/fonts';
 import type { BiodataData, TemplateStyle } from '../../../../shared/types';
 
 // Dynamic imports for templates to reduce bundle size and memory usage on low-end devices
@@ -70,13 +70,13 @@ export default function Preview({ data, template, isPrint = false }: PreviewProp
   return (
     <Box
       ref={ref}
-      className={`preview-container ${inter.className} ${outfit.variable}`}
+      className="preview-container"
       style={{
         width: '100%',
         minHeight: isPrint ? TARGET_WIDTH * ASPECT_RATIO : scaledHeight,
         opacity: isReady ? 1 : 0,
         transition: 'opacity 0.2s ease',
-        fontFamily: "'Inter', sans-serif",
+        fontFamily: inter.style.fontFamily,
       }}
     >
       {!isReady && !isPrint && (
