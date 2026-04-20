@@ -36,7 +36,7 @@ export default function BuilderContainer() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [pendingDownload, setPendingDownload] = useState(false);
 
-  const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime } =
+  const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime, syncPreview } =
     useBiodataForm();
 
   const { profiles, currentProfileId, setCurrentProfileId, handleSave, handleDelete } =
@@ -75,6 +75,9 @@ export default function BuilderContainer() {
   }, [form, currentProfileId, handleSave, template]);
 
   const startDownload = useCallback(async () => {
+    // Force a sync before downloading to ensure PDF has latest data
+    syncPreview();
+
     const values = form.getValues();
     setIsGenerating(true);
     notifications.show({
@@ -116,7 +119,7 @@ export default function BuilderContainer() {
         setIsGenerating(false);
       }
     }, 500);
-  }, [form]);
+  }, [form, syncPreview]);
 
   const onPrintClick = useCallback(() => {
     if (isGenerating) return;
@@ -159,8 +162,10 @@ export default function BuilderContainer() {
       setCurrentProfileId(profile.id);
       setIsSidebarOpen(false);
       setActiveTab('edit');
+      // Sync after loading a profile so preview is immediately correct
+      setTimeout(() => syncPreview(), 0);
     },
-    [form, setCurrentProfileId]
+    [form, setCurrentProfileId, syncPreview]
   );
 
   const handleNewProfile = useCallback(() => {
@@ -168,7 +173,8 @@ export default function BuilderContainer() {
     setCurrentProfileId(null);
     setIsSidebarOpen(false);
     setActiveTab('edit');
-  }, [form, setCurrentProfileId]);
+    syncPreview();
+  }, [form, setCurrentProfileId, syncPreview]);
 
   const onModalSave = useCallback(
     (profileName: string) => {
@@ -186,12 +192,27 @@ export default function BuilderContainer() {
     form.setValues(initialBiodataState);
     setCurrentProfileId(null);
     setIsResetModalOpen(false);
+    syncPreview();
     notifications.show({
       title: 'Form Reset',
       message: 'All fields have been cleared.',
       color: 'gray',
     });
-  }, [form, setCurrentProfileId]);
+  }, [form, setCurrentProfileId, syncPreview]);
+
+  const handleOpenResetModal = useCallback(() => {
+    setIsResetModalOpen(true);
+  }, []);
+
+  const handleTabChange = useCallback(
+    (tab: 'edit' | 'preview') => {
+      if (tab === 'preview') {
+        syncPreview();
+      }
+      setActiveTab(tab);
+    },
+    [syncPreview]
+  );
 
   return (
     <>
@@ -252,7 +273,7 @@ export default function BuilderContainer() {
           <nav className="top-tab-bar">
             <button
               className={activeTab === 'edit' ? 'active' : ''}
-              onClick={() => setActiveTab('edit')}
+              onClick={() => handleTabChange('edit')}
               type="button"
             >
               <Edit3 size={16} />
@@ -260,7 +281,7 @@ export default function BuilderContainer() {
             </button>
             <button
               className={activeTab === 'preview' ? 'active' : ''}
-              onClick={() => setActiveTab('preview')}
+              onClick={() => handleTabChange('preview')}
               type="button"
             >
               <Eye size={16} />
@@ -288,7 +309,7 @@ export default function BuilderContainer() {
                     removePhoto={removePhoto}
                     parseTime={parseTime}
                     updateTime={updateTime}
-                    onReset={() => setIsResetModalOpen(true)}
+                    onReset={handleOpenResetModal}
                   />
                 </Box>
               </ScrollArea>
@@ -314,12 +335,14 @@ export default function BuilderContainer() {
             </Box>
           </Flex>
 
-          {/* Hidden Print Container */}
-          <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
-            <div ref={printRef} className="print-container">
-              <Preview data={previewData} template={template} isPrint />
+          {/* Hidden Print Container - only rendered during PDF generation for performance */}
+          {isGenerating && (
+            <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
+              <div ref={printRef} className="print-container">
+                <Preview data={previewData} template={template} isPrint />
+              </div>
             </div>
-          </div>
+          )}
 
           <MobileActionBar isGenerating={isGenerating} onDownload={onPrintClick} />
 

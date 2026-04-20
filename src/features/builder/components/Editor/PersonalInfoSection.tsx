@@ -32,7 +32,7 @@ export const PersonalInfoSectionComponent: React.FC<PersonalInfoSectionProps> = 
   parseTime,
   updateTime,
 }) => {
-  const photo = form.values.personalDetails.photo;
+  const photo = form.getValues().personalDetails.photo;
 
   return (
     <SectionWrapper title="Personal Details" icon={<User size={18} />}>
@@ -105,7 +105,7 @@ export const PersonalInfoSectionComponent: React.FC<PersonalInfoSectionProps> = 
                 inputMode="numeric"
                 pattern="[0-9]*"
                 key={form.key('personalDetails.timeOfBirth-hh')}
-                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).h || ''}
+                defaultValue={parseTime(form.getValues().personalDetails.timeOfBirth).h || ''}
                 onChange={(e) => {
                   let v = e.target.value.replace(/\D/g, '');
                   // Proactive clamping for better UX
@@ -123,7 +123,7 @@ export const PersonalInfoSectionComponent: React.FC<PersonalInfoSectionProps> = 
                 inputMode="numeric"
                 pattern="[0-9]*"
                 key={form.key('personalDetails.timeOfBirth-mm')}
-                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).m || ''}
+                defaultValue={parseTime(form.getValues().personalDetails.timeOfBirth).m || ''}
                 onChange={(e) => {
                   let v = e.target.value.replace(/\D/g, '');
                   // Proactive clamping for better UX
@@ -138,7 +138,9 @@ export const PersonalInfoSectionComponent: React.FC<PersonalInfoSectionProps> = 
               <Select
                 placeholder="AM/PM"
                 key={form.key('personalDetails.timeOfBirth-ampm')}
-                defaultValue={parseTime(form.values.personalDetails.timeOfBirth).p || undefined}
+                defaultValue={
+                  parseTime(form.getValues().personalDetails.timeOfBirth).p || undefined
+                }
                 onChange={(v) => {
                   const t = parseTime(form.values.personalDetails.timeOfBirth);
                   updateTime(t.h, t.m, v || 'AM');
