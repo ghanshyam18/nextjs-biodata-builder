@@ -1,46 +1,61 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-import { A4_HEIGHT_MM, A4_WIDTH_MM } from '../constants/dimensions';
+import { A4_HEIGHT_MM, A4_HEIGHT_PX, A4_WIDTH_MM, A4_WIDTH_PX } from '../constants/dimensions';
 
 /**
- * High-fidelity PDF export utility using html2canvas and jsPDF.
- * This strategy renders the DOM to a canvas and then converts it to a PDF file,
- * ensuring consistency across mobile and desktop devices.
+ * Enterprise-grade PDF export utility.
+ * This implementation uses the "Best-in-Class" configuration for html2canvas + jsPDF:
+ * - 3x Scaling for Print-Grade DPI (approx 300 DPI equivalent)
+ * - Lossless PNG capture for crystal clear text
+ * - Precise A4 pixel-to-mm mapping
+ * - Font-readiness detection to prevent fallback font capture
  */
 export async function exportToPDF(
   element: HTMLElement,
   filename: string = 'Biodata.pdf'
 ): Promise<void> {
   try {
-    // 1. Capture the element with high resolution
+    // Ensure all fonts are fully loaded before capturing
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      await document.fonts.ready;
+    }
+
+    // 1. Capture with optimized settings
     const canvas = await html2canvas(element, {
-      scale: 2, // 2x for Retina quality
+      scale: 3, // 300 DPI equivalent (3x 96)
       useCORS: true,
+      allowTaint: false,
       logging: false,
       backgroundColor: '#ffffff',
-      // Ensure the capture captures the full height even if scrolled
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
+      width: A4_WIDTH_PX,
+      height: A4_HEIGHT_PX,
+      windowWidth: A4_WIDTH_PX,
+      windowHeight: A4_HEIGHT_PX,
+      scrollX: 0,
+      scrollY: 0,
+      imageTimeout: 15000,
+      removeContainer: true,
     });
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    // 2. Use PNG for lossless clarity (JPEG adds artifacts around text)
+    const imgData = canvas.toDataURL('image/png');
 
-    // 2. Initialize jsPDF with A4 dimensions
+    // 3. Initialize jsPDF with exact A4 specs
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
+      compress: true, // Compress the underlying image in the PDF stream
     });
 
-    // 3. Add the image to the PDF
-    // We fit the image to the A4 page width
-    pdf.addImage(imgData, 'JPEG', 0, 0, A4_WIDTH_MM, A4_HEIGHT_MM, undefined, 'FAST');
+    // 4. Add image with zero margins to fill the page
+    pdf.addImage(imgData, 'PNG', 0, 0, A4_WIDTH_MM, A4_HEIGHT_MM);
 
-    // 4. Trigger download
+    // 5. Save the file
     pdf.save(filename);
   } catch (error) {
-    console.error('PDF Generation Error:', error);
+    console.error('High-Res PDF Export Failed:', error);
     throw error;
   }
 }
