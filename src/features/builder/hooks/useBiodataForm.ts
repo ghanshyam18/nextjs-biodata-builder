@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { initialBiodataState } from '../../../shared/constants/initialState';
 import { compressImage } from '../../../shared/utils/image';
+import { formatTime, parseTime } from '../../../shared/utils/timeUtils';
 import { type BiodataFormValues, biodataSchema } from '../schemas/biodataSchema';
 
 export function useBiodataForm() {
@@ -18,33 +19,36 @@ export function useBiodataForm() {
 
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-  // Sync values to preview with debouncing to prevent lag
+  // Sync values to preview with debouncing to prevent lag on low-end devices
   const syncPreview = useCallback(() => {
     if (debounceTimer) clearTimeout(debounceTimer);
 
     const timer = setTimeout(() => {
-      const currentValues = form.getValues();
-      setPreviewData({ ...currentValues });
-    }, 300); // 300ms debounce is optimal for responsiveness vs performance
+      setPreviewData({ ...form.getValues() });
+    }, 250); // Slightly reduced debounce for snappier feel
 
     setDebounceTimer(timer);
   }, [form, debounceTimer]);
 
-  // Initial sync and cleanup
+  // Cleanup on unmount
   useEffect(() => {
-    syncPreview();
     return () => {
       if (debounceTimer) clearTimeout(debounceTimer);
     };
-  }, []);
+  }, [debounceTimer]);
 
   const handlePhotoChange = async (file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async (ev) => {
       const base64 = ev.target?.result as string;
-      const compressed = await compressImage(base64);
-      form.setFieldValue('personalDetails.photo', compressed);
+      try {
+        const compressed = await compressImage(base64);
+        form.setFieldValue('personalDetails.photo', compressed);
+      } catch (err) {
+        console.error('Image compression failed:', err);
+        form.setFieldValue('personalDetails.photo', base64); // Fallback
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -53,24 +57,8 @@ export function useBiodataForm() {
     form.setFieldValue('personalDetails.photo', '');
   };
 
-  const parseTime = (timeStr: string) => {
-    if (!timeStr) return { h: '', m: '', p: '' };
-    const [hStr, mStr] = timeStr.split(':');
-    let h = parseInt(hStr || '12');
-    const p = h >= 12 ? 'PM' : 'AM';
-    h = h % 12;
-    if (h === 0) h = 12;
-    return { h: String(h), m: mStr, p };
-  };
-
   const updateTime = (h: string, m: string, p: string) => {
-    let hour = parseInt(h || '12');
-    if (p === 'PM' && hour !== 12) hour += 12;
-    if (p === 'AM' && hour === 12) hour = 0;
-    form.setFieldValue(
-      'personalDetails.timeOfBirth',
-      `${String(hour).padStart(2, '0')}:${m || '00'}`
-    );
+    form.setFieldValue('personalDetails.timeOfBirth', formatTime(h, m, p));
   };
 
   return {

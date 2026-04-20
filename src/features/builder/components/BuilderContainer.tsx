@@ -1,8 +1,8 @@
 'use client';
 
-import { AppShell, Box, Button, Flex, Group, ScrollArea, Select } from '@mantine/core';
+import { AppShell, Box, Flex, ScrollArea, Select } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { Edit3, Eye, FileDown, Save } from 'lucide-react';
+import { Edit3, Eye } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 
 import HeaderActions from '../../../shared/components/layout/HeaderActions';
@@ -13,6 +13,7 @@ import ProfileSidebar from '../../profiles/components/ProfileSidebar';
 import SaveModal from '../../profiles/components/SaveModal';
 import { useProfiles } from '../../profiles/hooks/useProfiles';
 import { useBiodataForm } from '../hooks/useBiodataForm';
+import { DesktopActionBar, MobileActionBar } from './ActionBars';
 import Editor from './Editor/Editor';
 import Preview from './Preview/Preview';
 import ResetModal from './ResetModal';
@@ -44,7 +45,6 @@ export default function BuilderContainer() {
   const printRef = useRef<HTMLDivElement>(null);
 
   const onSaveClick = useCallback(() => {
-    // Defensive check for empty form/name before full validation to prevent internal crashes
     const values = form.getValues();
     if (!values.personalDetails.fullName?.trim()) {
       notifications.show({
@@ -56,31 +56,21 @@ export default function BuilderContainer() {
       return;
     }
 
-    try {
-      const result = form.validate();
-      if (result.hasErrors) {
-        notifications.show({
-          title: 'Validation Failed',
-          message: 'Please check the highlighted errors in the form.',
-          color: 'red',
-          position: 'top-center',
-        });
-        return;
-      }
+    const result = form.validate();
+    if (result.hasErrors) {
+      notifications.show({
+        title: 'Validation Failed',
+        message: 'Please check the highlighted errors in the form.',
+        color: 'red',
+        position: 'top-center',
+      });
+      return;
+    }
 
-      if (currentProfileId) {
-        handleSave('', values, template);
-      } else {
-        setIsSaveModalOpen(true);
-      }
-    } catch (err) {
-      console.error('Validation Error:', err);
-      // Fallback if internal validate fails
-      if (currentProfileId) {
-        handleSave('', values, template);
-      } else {
-        setIsSaveModalOpen(true);
-      }
+    if (currentProfileId) {
+      handleSave('', values, template);
+    } else {
+      setIsSaveModalOpen(true);
     }
   }, [form, currentProfileId, handleSave, template]);
 
@@ -96,7 +86,6 @@ export default function BuilderContainer() {
       withCloseButton: false,
     });
 
-    // Small delay to ensure DOM is ready
     setTimeout(async () => {
       try {
         if (printRef.current) {
@@ -154,7 +143,6 @@ export default function BuilderContainer() {
       return;
     }
 
-    // Auto-save logic
     if (currentProfileId) {
       handleSave('', values, template);
       startDownload();
@@ -285,8 +273,8 @@ export default function BuilderContainer() {
             <Box
               className="pane-editor"
               w={{ base: '100%', sm: '50%', xl: '40%' }}
+              display={{ base: activeTab === 'edit' ? 'block' : 'none', sm: 'block' }}
               style={{
-                display: activeTab === 'edit' ? 'block' : 'none',
                 borderRight: '1px solid var(--mantine-color-gray-2)',
                 backgroundColor: 'white',
                 overflow: 'hidden',
@@ -311,8 +299,8 @@ export default function BuilderContainer() {
               className="pane-preview"
               flex={1}
               bg="gray.1"
+              display={{ base: activeTab === 'preview' ? 'block' : 'none', sm: 'block' }}
               style={{
-                display: activeTab === 'preview' ? 'block' : 'none',
                 overflow: 'hidden',
               }}
             >
@@ -326,53 +314,21 @@ export default function BuilderContainer() {
             </Box>
           </Flex>
 
-          {/* Hidden Print Container: Physically 1:1 A4 for high-quality capture */}
+          {/* Hidden Print Container */}
           <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
             <div ref={printRef} className="print-container">
               <Preview data={previewData} template={template} isPrint />
             </div>
           </div>
 
-          {/* Mobile bottom action bar */}
-          <div className="bottom-action-bar">
-            <button
-              className="action-btn print-btn"
-              onClick={onPrintClick}
-              type="button"
-              disabled={isGenerating}
-            >
-              {isGenerating ? <div className="loader-dots" /> : <FileDown size={18} />}
-              {isGenerating ? 'Generating...' : 'Save & Download PDF'}
-            </button>
-          </div>
+          <MobileActionBar isGenerating={isGenerating} onDownload={onPrintClick} />
 
-          {/* Desktop action buttons */}
-          <Box
-            visibleFrom="sm"
-            px="lg"
-            py="sm"
-            bg="white"
-            style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}
-          >
-            <Group justify="flex-end" gap="sm">
-              <Button
-                variant="default"
-                leftSection={<Save size={16} color="var(--mantine-color-blue-7)" />}
-                onClick={onSaveClick}
-              >
-                {currentProfileId ? 'Update Profile' : 'Save Draft'}
-              </Button>
-              <Button
-                leftSection={isGenerating ? null : <FileDown size={16} />}
-                onClick={onPrintClick}
-                loading={isGenerating}
-                variant="filled"
-                color="blue.7"
-              >
-                Save & Download PDF
-              </Button>
-            </Group>
-          </Box>
+          <DesktopActionBar
+            isGenerating={isGenerating}
+            onSave={onSaveClick}
+            onDownload={onPrintClick}
+            currentProfileId={currentProfileId}
+          />
         </AppShell.Main>
       </AppShell>
     </>

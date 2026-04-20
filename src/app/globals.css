@@ -23,13 +23,7 @@ h6 {
   font-family: var(--font-outfit), var(--font-inter), sans-serif;
 }
 
-/* Desktop: force both panes visible */
-@media (min-width: 768px) {
-  .pane-editor,
-  .pane-preview {
-    display: block !important;
-  }
-}
+/* Desktop layout logic is now handled via Mantine props in BuilderContainer.tsx */
 
 /* ── Top Tab Bar (mobile only) ── */
 .top-tab-bar {
@@ -106,11 +100,6 @@ h6 {
 .bottom-action-bar .action-btn:active {
   opacity: 0.8;
 }
-.bottom-action-bar .action-btn.save-btn {
-  background: var(--mantine-color-gray-1);
-  color: var(--mantine-color-blue-7);
-  border: 1px solid var(--mantine-color-gray-3);
-}
 .bottom-action-bar .action-btn.print-btn {
   background: var(--mantine-color-blue-7);
   color: white;
@@ -134,42 +123,15 @@ h6 {
   }
 }
 
-/* ── Print ── */
+/* ── Print (Basic fallback for Browser Print) ── */
 @media print {
   @page {
     size: A4 portrait;
     margin: 0;
   }
 
-  html,
-  body {
-    height: auto !important;
-    overflow: visible !important;
-    background: white !important;
-  }
-
-  /* Hide UI elements definitely */
-  .top-tab-bar,
-  .bottom-action-bar,
-  .mantine-AppShell-header,
-  .pane-editor,
-  [data-app-header],
-  header {
-    display: none !important;
-  }
-
-  /* Ensure the main container doesn't have restrictive styles during print */
-  .mantine-AppShell-main {
-    padding: 0 !important;
-    margin: 0 !important;
-    height: auto !important;
-    display: block !important;
-  }
-
-  /* Hide everything else except the print container */
-  /* We use a more surgical approach than 'body * { visibility: hidden }' 
-     to avoid browser-specific visibility bugs on mobile. */
-  body > *:not(.print-container):not(.mantine-AppShell) {
+  /* Hide everything except the dedicated print container */
+  body > *:not(.print-container) {
     display: none !important;
   }
 
@@ -179,14 +141,10 @@ h6 {
     left: 0 !important;
     top: 0 !important;
     width: 210mm !important;
-    min-height: 297mm !important;
     background: white !important;
-    padding: 0 !important;
-    margin: 0 !important;
     z-index: 9999 !important;
   }
 
-  /* Force the preview inside print-container to be visible and unscaled */
   .print-container .preview-container {
     opacity: 1 !important;
     visibility: visible !important;

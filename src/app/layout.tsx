@@ -6,6 +6,7 @@ import { ColorSchemeScript, createTheme, mantineHtmlProps, MantineProvider } fro
 import { Notifications } from '@mantine/notifications';
 import { Metadata } from 'next';
 
+import ErrorBoundary from '../shared/components/ErrorBoundary';
 import { inter, outfit } from '../shared/fonts';
 
 const theme = createTheme({
@@ -92,7 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         <MantineProvider theme={theme} defaultColorScheme="light" forceColorScheme="light">
           <Notifications position="top-right" zIndex={2000} />
-          {children}
+          <ErrorBoundary>{children}</ErrorBoundary>
         </MantineProvider>
       </body>
     </html>
