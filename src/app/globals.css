@@ -192,3 +192,59 @@ h6 {
     visibility: visible !important;
   }
 }
+
+/* ── Loader Dots for Buttons ── */
+.loader-dots {
+  width: 18px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 2px;
+  position: relative;
+  animation: loader-dots 1s infinite linear;
+}
+.loader-dots::before,
+.loader-dots::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  top: 0;
+}
+.loader-dots::before {
+  left: -8px;
+  animation: loader-dots-before 1s infinite linear;
+}
+.loader-dots::after {
+  left: 8px;
+  animation: loader-dots-after 1s infinite linear;
+}
+
+@keyframes loader-dots {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+@keyframes loader-dots-before {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes loader-dots-after {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}

@@ -2,13 +2,13 @@
 
 import { AppShell, Box, Button, Flex, Group, ScrollArea, Select } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { Edit3, Eye, Printer, Save } from 'lucide-react';
+import { Edit3, Eye, FileDown, Save } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { useReactToPrint } from 'react-to-print';
 
 import HeaderActions from '../../../shared/components/layout/HeaderActions';
 import { initialBiodataState } from '../../../shared/constants/initialState';
 import type { SavedProfile, TemplateStyle } from '../../../shared/types';
+import { exportToPDF } from '../../../shared/utils/pdf';
 import ProfileSidebar from '../../profiles/components/ProfileSidebar';
 import SaveModal from '../../profiles/components/SaveModal';
 import { useProfiles } from '../../profiles/hooks/useProfiles';
@@ -30,6 +30,7 @@ export default function BuilderContainer() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime } =
     useBiodataForm();
@@ -38,11 +39,6 @@ export default function BuilderContainer() {
     useProfiles();
 
   const printRef = useRef<HTMLDivElement>(null);
-
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    documentTitle: `Biodata_${form.getValues().personalDetails.fullName || 'New'}`,
-  });
 
   const onSaveClick = useCallback(() => {
     // Defensive check for empty form/name before full validation to prevent internal crashes
@@ -86,6 +82,8 @@ export default function BuilderContainer() {
   }, [form, currentProfileId, handleSave, template]);
 
   const onPrintClick = useCallback(() => {
+    if (isGenerating) return;
+
     const values = form.getValues();
     if (!values.personalDetails.fullName?.trim()) {
       notifications.show({
@@ -108,12 +106,53 @@ export default function BuilderContainer() {
         });
         return;
       }
+
+      setIsGenerating(true);
+      notifications.show({
+        id: 'pdf-generating',
+        title: 'Generating PDF',
+        message: 'Please wait while we prepare your professional biodata...',
+        loading: true,
+        autoClose: false,
+        withCloseButton: false,
+      });
+
+      // Small delay to ensure DOM is ready and any transitions are settled
+      setTimeout(async () => {
+        try {
+          if (printRef.current) {
+            await exportToPDF(
+              printRef.current,
+              `Biodata_${values.personalDetails.fullName.replace(/\s+/g, '_')}.pdf`
+            );
+            notifications.update({
+              id: 'pdf-generating',
+              title: 'Success!',
+              message: 'Your biodata has been downloaded.',
+              color: 'teal',
+              loading: false,
+              autoClose: 3000,
+            });
+          }
+        } catch (err) {
+          console.error('PDF Error:', err);
+          notifications.update({
+            id: 'pdf-generating',
+            title: 'Export Failed',
+            message: 'There was an error generating the PDF. Please try again.',
+            color: 'red',
+            loading: false,
+            autoClose: 5000,
+          });
+        } finally {
+          setIsGenerating(false);
+        }
+      }, 500);
     } catch (err) {
       console.error('Validation Error:', err);
+      setIsGenerating(false);
     }
-
-    handlePrint();
-  }, [form, handlePrint]);
+  }, [form, isGenerating]);
 
   const handleLoadProfile = useCallback(
     (profile: SavedProfile) => {
@@ -265,9 +304,14 @@ export default function BuilderContainer() {
               <Save size={18} />
               {currentProfileId ? 'Update' : 'Save'}
             </button>
-            <button className="action-btn print-btn" onClick={onPrintClick} type="button">
-              <Printer size={18} />
-              Print / PDF
+            <button
+              className="action-btn print-btn"
+              onClick={onPrintClick}
+              type="button"
+              disabled={isGenerating}
+            >
+              {isGenerating ? <div className="loader-dots" /> : <FileDown size={18} />}
+              {isGenerating ? 'Generating...' : 'Download PDF'}
             </button>
           </div>
 
@@ -287,8 +331,12 @@ export default function BuilderContainer() {
               >
                 {currentProfileId ? 'Update' : 'Save'}
               </Button>
-              <Button leftSection={<Printer size={16} />} onClick={onPrintClick}>
-                Print / Save PDF
+              <Button
+                leftSection={isGenerating ? null : <FileDown size={16} />}
+                onClick={onPrintClick}
+                loading={isGenerating}
+              >
+                Download PDF
               </Button>
             </Group>
           </Box>
