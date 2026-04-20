@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Button, Group, Image, Select, Title } from '@mantine/core';
+import { Box, Button, Group, Image, Select, Title } from '@mantine/core';
 import { History } from 'lucide-react';
 
 import type { TemplateStyle } from '../../types';
@@ -54,15 +54,15 @@ export default function HeaderActions({
         >
           Profiles
         </Button>
-        <ActionIcon
+        <Button
           variant="default"
-          size="lg"
+          size="compact-sm"
+          leftSection={<History size={16} />}
           onClick={onOpenSidebar}
-          title="Saved Profiles"
           hiddenFrom="sm"
         >
-          <History size={18} />
-        </ActionIcon>
+          Profiles
+        </Button>
       </Group>
     </Group>
   );
