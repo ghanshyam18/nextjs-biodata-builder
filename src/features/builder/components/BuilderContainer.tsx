@@ -97,7 +97,9 @@ export default function BuilderContainer() {
         if (printRef.current) {
           await exportToPDF(
             printRef.current,
-            `Biodata_${values.personalDetails.fullName.replace(/\s+/g, '_')}.pdf`
+            `Biodata_${values.personalDetails.fullName.replace(/\s+/g, '_')}.pdf`,
+            template,
+            values
           );
           notifications.update({
             id: 'pdf-generating',
