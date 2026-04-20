@@ -14,6 +14,7 @@ import {
 export function useProfiles() {
   const [profiles, setProfiles] = useState<SavedProfile[]>([]);
   const [currentProfileId, setCurrentProfileId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchProfiles = useCallback(async () => {
     const p = await getSavedProfiles();
@@ -26,29 +27,35 @@ export function useProfiles() {
 
   const handleSave = useCallback(
     async (profileName: string, data: BiodataData, template: TemplateStyle) => {
-      if (currentProfileId) {
-        await updateProfile(currentProfileId, data, template);
-        notifications.show({
-          title: 'Profile Updated',
-          message: 'Your changes have been saved successfully.',
-          color: 'blue',
-          icon: React.createElement(Save, { size: 16 }),
-          position: 'top-center',
-        });
-      } else {
-        const newProfile = await saveProfile(profileName, data, template);
-        setCurrentProfileId(newProfile.id);
-        notifications.show({
-          title: 'Profile Saved',
-          message: `${profileName} is now stored locally.`,
-          color: 'green',
-          icon: React.createElement(Check, { size: 16 }),
-          position: 'top-center',
-        });
+      if (isSaving) return;
+      setIsSaving(true);
+      try {
+        if (currentProfileId) {
+          await updateProfile(currentProfileId, data, template);
+          notifications.show({
+            title: 'Profile Updated',
+            message: 'Your changes have been saved successfully.',
+            color: 'blue',
+            icon: React.createElement(Save, { size: 16 }),
+            position: 'top-center',
+          });
+        } else {
+          const newProfile = await saveProfile(profileName, data, template);
+          setCurrentProfileId(newProfile.id);
+          notifications.show({
+            title: 'Profile Saved',
+            message: `${profileName} is now stored locally.`,
+            color: 'green',
+            icon: React.createElement(Check, { size: 16 }),
+            position: 'top-center',
+          });
+        }
+        await fetchProfiles();
+      } finally {
+        setIsSaving(false);
       }
-      await fetchProfiles();
     },
-    [currentProfileId, fetchProfiles]
+    [currentProfileId, fetchProfiles, isSaving]
   );
 
   const handleDelete = useCallback(
@@ -74,5 +81,6 @@ export function useProfiles() {
     handleSave,
     handleDelete,
     fetchProfiles,
+    isSaving,
   };
 }

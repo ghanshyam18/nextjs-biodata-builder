@@ -39,12 +39,14 @@ export default function BuilderContainer() {
   const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime, syncPreview } =
     useBiodataForm();
 
-  const { profiles, currentProfileId, setCurrentProfileId, handleSave, handleDelete } =
+  const { profiles, currentProfileId, setCurrentProfileId, handleSave, handleDelete, isSaving } =
     useProfiles();
 
   const printRef = useRef<HTMLDivElement>(null);
 
   const onSaveClick = useCallback(() => {
+    if (isSaving || isGenerating) return;
+
     const values = form.getValues();
     if (!values.personalDetails.fullName?.trim()) {
       notifications.show({
@@ -72,9 +74,10 @@ export default function BuilderContainer() {
     } else {
       setIsSaveModalOpen(true);
     }
-  }, [form, currentProfileId, handleSave, template]);
+  }, [form, currentProfileId, handleSave, template, isSaving, isGenerating]);
 
   const startDownload = useCallback(async () => {
+    if (isGenerating) return;
     // Force a sync before downloading to ensure PDF has latest data
     syncPreview();
 
@@ -119,10 +122,10 @@ export default function BuilderContainer() {
         setIsGenerating(false);
       }
     }, 500);
-  }, [form, syncPreview]);
+  }, [form, syncPreview, isGenerating]);
 
   const onPrintClick = useCallback(() => {
-    if (isGenerating) return;
+    if (isGenerating || isSaving) return;
 
     const values = form.getValues();
     if (!values.personalDetails.fullName?.trim()) {
@@ -153,7 +156,7 @@ export default function BuilderContainer() {
       setPendingDownload(true);
       setIsSaveModalOpen(true);
     }
-  }, [form, isGenerating, currentProfileId, handleSave, template, startDownload]);
+  }, [form, isGenerating, currentProfileId, handleSave, template, startDownload, isSaving]);
 
   const handleLoadProfile = useCallback(
     (profile: SavedProfile) => {
@@ -344,10 +347,10 @@ export default function BuilderContainer() {
             </div>
           )}
 
-          <MobileActionBar isGenerating={isGenerating} onDownload={onPrintClick} />
+          <MobileActionBar isGenerating={isGenerating || isSaving} onDownload={onPrintClick} />
 
           <DesktopActionBar
-            isGenerating={isGenerating}
+            isGenerating={isGenerating || isSaving}
             onSave={onSaveClick}
             onDownload={onPrintClick}
             currentProfileId={currentProfileId}
