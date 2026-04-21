@@ -1,20 +1,22 @@
 'use client';
 
-import { AppShell, Box, Button, Flex, Group, ScrollArea, Select } from '@mantine/core';
+import { AppShell, Box, Flex, ScrollArea, Select } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { Edit3, Eye, Printer, Save } from 'lucide-react';
+import { Edit3, Eye } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { useReactToPrint } from 'react-to-print';
 
 import HeaderActions from '../../../shared/components/layout/HeaderActions';
 import { initialBiodataState } from '../../../shared/constants/initialState';
 import type { SavedProfile, TemplateStyle } from '../../../shared/types';
+import { exportToPDF } from '../../../shared/utils/pdf';
 import ProfileSidebar from '../../profiles/components/ProfileSidebar';
 import SaveModal from '../../profiles/components/SaveModal';
 import { useProfiles } from '../../profiles/hooks/useProfiles';
 import { useBiodataForm } from '../hooks/useBiodataForm';
+import { DesktopActionBar, MobileActionBar } from './ActionBars';
 import Editor from './Editor/Editor';
 import Preview from './Preview/Preview';
+import ResetModal from './ResetModal';
 
 const templates: { id: TemplateStyle; name: string }[] = [
   { id: 'traditional', name: '🔴 Traditional' },
@@ -30,22 +32,21 @@ export default function BuilderContainer() {
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [pendingDownload, setPendingDownload] = useState(false);
 
-  const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime } =
+  const { form, previewData, handlePhotoChange, removePhoto, parseTime, updateTime, syncPreview } =
     useBiodataForm();
 
-  const { profiles, currentProfileId, setCurrentProfileId, handleSave, handleDelete } =
+  const { profiles, currentProfileId, setCurrentProfileId, handleSave, handleDelete, isSaving } =
     useProfiles();
 
   const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    documentTitle: `Biodata_${form.getValues().personalDetails.fullName || 'New'}`,
-  });
-
   const onSaveClick = useCallback(() => {
-    // Defensive check for empty form/name before full validation to prevent internal crashes
+    if (isSaving || isGenerating) return;
+
     const values = form.getValues();
     if (!values.personalDetails.fullName?.trim()) {
       notifications.show({
@@ -57,35 +58,77 @@ export default function BuilderContainer() {
       return;
     }
 
-    try {
-      const result = form.validate();
-      if (result.hasErrors) {
-        notifications.show({
-          title: 'Validation Failed',
-          message: 'Please check the highlighted errors in the form.',
-          color: 'red',
-          position: 'top-center',
-        });
-        return;
-      }
-
-      if (currentProfileId) {
-        handleSave('', values, template);
-      } else {
-        setIsSaveModalOpen(true);
-      }
-    } catch (err) {
-      console.error('Validation Error:', err);
-      // Fallback if internal validate fails
-      if (currentProfileId) {
-        handleSave('', values, template);
-      } else {
-        setIsSaveModalOpen(true);
-      }
+    const result = form.validate();
+    if (result.hasErrors) {
+      notifications.show({
+        title: 'Validation Failed',
+        message: 'Please check the highlighted errors in the form.',
+        color: 'red',
+        position: 'top-center',
+      });
+      return;
     }
-  }, [form, currentProfileId, handleSave, template]);
+
+    if (currentProfileId) {
+      handleSave('', values, template);
+    } else {
+      setIsSaveModalOpen(true);
+    }
+  }, [form, currentProfileId, handleSave, template, isSaving, isGenerating]);
+
+  const startDownload = useCallback(async () => {
+    if (isGenerating) return;
+    // Force a sync before downloading to ensure PDF has latest data
+    syncPreview();
+
+    const values = form.getValues();
+    setIsGenerating(true);
+    notifications.show({
+      id: 'pdf-generating',
+      title: 'Generating PDF',
+      message: 'Please wait while we prepare your professional biodata...',
+      loading: true,
+      autoClose: false,
+      withCloseButton: false,
+    });
+
+    setTimeout(async () => {
+      try {
+        if (printRef.current) {
+          await exportToPDF(
+            printRef.current,
+            `Biodata_${values.personalDetails.fullName.replace(/\s+/g, '_')}.pdf`,
+            template,
+            values
+          );
+          notifications.update({
+            id: 'pdf-generating',
+            title: 'Success!',
+            message: 'Your biodata has been saved and downloaded.',
+            color: 'teal',
+            loading: false,
+            autoClose: 3000,
+          });
+        }
+      } catch (err) {
+        console.error('PDF Error:', err);
+        notifications.update({
+          id: 'pdf-generating',
+          title: 'Export Failed',
+          message: 'There was an error generating the PDF. Please try again.',
+          color: 'red',
+          loading: false,
+          autoClose: 5000,
+        });
+      } finally {
+        setIsGenerating(false);
+      }
+    }, 500);
+  }, [form, syncPreview, isGenerating]);
 
   const onPrintClick = useCallback(() => {
+    if (isGenerating || isSaving) return;
+
     const values = form.getValues();
     if (!values.personalDetails.fullName?.trim()) {
       notifications.show({
@@ -97,23 +140,25 @@ export default function BuilderContainer() {
       return;
     }
 
-    try {
-      const result = form.validate();
-      if (result.hasErrors) {
-        notifications.show({
-          title: 'Form Incomplete',
-          message: 'Correct the errors before generating PDF.',
-          color: 'red',
-          position: 'top-center',
-        });
-        return;
-      }
-    } catch (err) {
-      console.error('Validation Error:', err);
+    const result = form.validate();
+    if (result.hasErrors) {
+      notifications.show({
+        title: 'Form Incomplete',
+        message: 'Correct the errors before generating PDF.',
+        color: 'red',
+        position: 'top-center',
+      });
+      return;
     }
 
-    handlePrint();
-  }, [form, handlePrint]);
+    if (currentProfileId) {
+      handleSave('', values, template);
+      startDownload();
+    } else {
+      setPendingDownload(true);
+      setIsSaveModalOpen(true);
+    }
+  }, [form, isGenerating, currentProfileId, handleSave, template, startDownload, isSaving]);
 
   const handleLoadProfile = useCallback(
     (profile: SavedProfile) => {
@@ -122,8 +167,10 @@ export default function BuilderContainer() {
       setCurrentProfileId(profile.id);
       setIsSidebarOpen(false);
       setActiveTab('edit');
+      // Sync after loading a profile so preview is immediately correct
+      setTimeout(() => syncPreview(), 0);
     },
-    [form, setCurrentProfileId]
+    [form, setCurrentProfileId, syncPreview]
   );
 
   const handleNewProfile = useCallback(() => {
@@ -131,14 +178,45 @@ export default function BuilderContainer() {
     setCurrentProfileId(null);
     setIsSidebarOpen(false);
     setActiveTab('edit');
-  }, [form, setCurrentProfileId]);
+    syncPreview();
+  }, [form, setCurrentProfileId, syncPreview]);
 
   const onModalSave = useCallback(
     (profileName: string) => {
       handleSave(profileName, form.getValues(), template);
       setIsSaveModalOpen(false);
+      if (pendingDownload) {
+        setPendingDownload(false);
+        startDownload();
+      }
     },
-    [form, handleSave, template]
+    [form, handleSave, template, pendingDownload, startDownload]
+  );
+
+  const handleConfirmReset = useCallback(() => {
+    form.setValues(initialBiodataState);
+    setCurrentProfileId(null);
+    setIsResetModalOpen(false);
+    syncPreview();
+    notifications.show({
+      title: 'Form Reset',
+      message: 'All fields have been cleared.',
+      color: 'gray',
+    });
+  }, [form, setCurrentProfileId, syncPreview]);
+
+  const handleOpenResetModal = useCallback(() => {
+    setIsResetModalOpen(true);
+  }, []);
+
+  const handleTabChange = useCallback(
+    (tab: 'edit' | 'preview') => {
+      if (tab === 'preview') {
+        syncPreview();
+      }
+      setActiveTab(tab);
+    },
+    [syncPreview]
   );
 
   return (
@@ -167,7 +245,16 @@ export default function BuilderContainer() {
             isOpen={isSaveModalOpen}
             initialName={form.getValues().personalDetails.fullName || ''}
             onSave={onModalSave}
-            onClose={() => setIsSaveModalOpen(false)}
+            onClose={() => {
+              setIsSaveModalOpen(false);
+              setPendingDownload(false);
+            }}
+          />
+
+          <ResetModal
+            opened={isResetModalOpen}
+            onClose={() => setIsResetModalOpen(false)}
+            onConfirm={handleConfirmReset}
           />
 
           {/* Mobile template picker */}
@@ -191,7 +278,7 @@ export default function BuilderContainer() {
           <nav className="top-tab-bar">
             <button
               className={activeTab === 'edit' ? 'active' : ''}
-              onClick={() => setActiveTab('edit')}
+              onClick={() => handleTabChange('edit')}
               type="button"
             >
               <Edit3 size={16} />
@@ -199,7 +286,7 @@ export default function BuilderContainer() {
             </button>
             <button
               className={activeTab === 'preview' ? 'active' : ''}
-              onClick={() => setActiveTab('preview')}
+              onClick={() => handleTabChange('preview')}
               type="button"
             >
               <Eye size={16} />
@@ -212,8 +299,8 @@ export default function BuilderContainer() {
             <Box
               className="pane-editor"
               w={{ base: '100%', sm: '50%', xl: '40%' }}
+              display={{ base: activeTab === 'edit' ? 'block' : 'none', sm: 'block' }}
               style={{
-                display: activeTab === 'edit' ? 'block' : 'none',
                 borderRight: '1px solid var(--mantine-color-gray-2)',
                 backgroundColor: 'white',
                 overflow: 'hidden',
@@ -227,6 +314,7 @@ export default function BuilderContainer() {
                     removePhoto={removePhoto}
                     parseTime={parseTime}
                     updateTime={updateTime}
+                    onReset={handleOpenResetModal}
                   />
                 </Box>
               </ScrollArea>
@@ -237,8 +325,8 @@ export default function BuilderContainer() {
               className="pane-preview"
               flex={1}
               bg="gray.1"
+              display={{ base: activeTab === 'preview' ? 'block' : 'none', sm: 'block' }}
               style={{
-                display: activeTab === 'preview' ? 'block' : 'none',
                 overflow: 'hidden',
               }}
             >
@@ -252,46 +340,23 @@ export default function BuilderContainer() {
             </Box>
           </Flex>
 
-          {/* Hidden Print Container: Physically 1:1 A4 for high-quality capture */}
-          <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
-            <div ref={printRef} className="print-container">
-              <Preview data={previewData} template={template} isPrint />
+          {/* Hidden Print Container - only rendered during PDF generation for performance */}
+          {isGenerating && (
+            <div style={{ position: 'fixed', left: '-9999px', top: 0, pointerEvents: 'none' }}>
+              <div ref={printRef} className="print-container">
+                <Preview data={previewData} template={template} isPrint />
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Mobile bottom action bar */}
-          <div className="bottom-action-bar">
-            <button className="action-btn save-btn" onClick={onSaveClick} type="button">
-              <Save size={18} />
-              {currentProfileId ? 'Update' : 'Save'}
-            </button>
-            <button className="action-btn print-btn" onClick={onPrintClick} type="button">
-              <Printer size={18} />
-              Print / PDF
-            </button>
-          </div>
+          <MobileActionBar isGenerating={isGenerating || isSaving} onDownload={onPrintClick} />
 
-          {/* Desktop action buttons */}
-          <Box
-            visibleFrom="sm"
-            px="lg"
-            py="sm"
-            bg="white"
-            style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}
-          >
-            <Group justify="flex-end" gap="sm">
-              <Button
-                variant="default"
-                leftSection={<Save size={16} color="var(--mantine-color-blue-7)" />}
-                onClick={onSaveClick}
-              >
-                {currentProfileId ? 'Update' : 'Save'}
-              </Button>
-              <Button leftSection={<Printer size={16} />} onClick={onPrintClick}>
-                Print / Save PDF
-              </Button>
-            </Group>
-          </Box>
+          <DesktopActionBar
+            isGenerating={isGenerating || isSaving}
+            onSave={onSaveClick}
+            onDownload={onPrintClick}
+            currentProfileId={currentProfileId}
+          />
         </AppShell.Main>
       </AppShell>
     </>

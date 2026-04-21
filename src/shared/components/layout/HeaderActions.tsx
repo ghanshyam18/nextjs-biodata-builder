@@ -1,5 +1,6 @@
-import { ActionIcon, Box, Button, Group, Image, Select, Title } from '@mantine/core';
+import { Box, Button, Group, Select, Title } from '@mantine/core';
 import { History } from 'lucide-react';
+import NextImage from 'next/image';
 
 import type { TemplateStyle } from '../../types';
 
@@ -20,7 +21,7 @@ export default function HeaderActions({
     <Group h="100%" px="sm" justify="space-between" bg="white" wrap="nowrap">
       {/* Left: Brand */}
       <Group gap={8} wrap="nowrap" align="center">
-        <Image src="/logo.svg" w={32} h={32} alt="Logo" />
+        <NextImage src="/logo.svg" width={32} height={32} alt="Logo" priority />
         <Title
           order={1}
           fz={{ base: 'md', sm: 'h5' }}
@@ -54,15 +55,15 @@ export default function HeaderActions({
         >
           Profiles
         </Button>
-        <ActionIcon
+        <Button
           variant="default"
-          size="lg"
+          size="compact-sm"
+          leftSection={<History size={16} />}
           onClick={onOpenSidebar}
-          title="Saved Profiles"
           hiddenFrom="sm"
         >
-          <History size={18} />
-        </ActionIcon>
+          Profiles
+        </Button>
       </Group>
     </Group>
   );

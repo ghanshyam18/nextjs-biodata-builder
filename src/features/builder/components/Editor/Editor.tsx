@@ -1,5 +1,6 @@
-import { Stack } from '@mantine/core';
+import { Button, Divider, Stack } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
+import { RefreshCcw } from 'lucide-react';
 import { memo, useCallback } from 'react';
 
 import type { BiodataFormValues } from '../../schemas/biodataSchema';
@@ -14,10 +15,11 @@ interface EditorProps {
   removePhoto: () => void;
   parseTime: (timeStr: string) => { h: string; m: string; p: string };
   updateTime: (h: string, m: string, p: string) => void;
+  onReset: () => void;
 }
 
 export const Editor = memo(
-  ({ form, handlePhotoChange, removePhoto, parseTime, updateTime }: EditorProps) => {
+  ({ form, handlePhotoChange, removePhoto, parseTime, updateTime, onReset }: EditorProps) => {
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
         if (e.target instanceof HTMLTextAreaElement) return;
@@ -47,6 +49,17 @@ export const Editor = memo(
         <EducationSection form={form} />
         <FamilySection form={form} />
         <ContactSection form={form} />
+
+        <Divider mt="md" />
+        <Button
+          variant="light"
+          color="gray"
+          leftSection={<RefreshCcw size={16} />}
+          onClick={onReset}
+          fullWidth
+        >
+          Reset Form
+        </Button>
       </Stack>
     );
   }

@@ -1,47 +1,55 @@
 import { z } from 'zod';
 
+/**
+ * Reusable safe string schema to prevent XSS and enforce length limits
+ * across all input fields consistently.
+ */
+const safeString = (max: number = 100, required: boolean = false) => {
+  let schema = z.string().trim();
+
+  if (required) {
+    schema = schema.min(1, 'This field is required');
+  }
+
+  return schema
+    .max(max, `Max ${max} characters allowed`)
+    .refine((val) => !val || !/[<>]/.test(val), 'Invalid characters detected')
+    .default('');
+};
+
 export const personalDetailsSchema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(1, 'Full Name is required')
-    .max(50, 'Max 50 characters allowed')
-    .refine((val) => !/[<>]/.test(val), 'Invalid characters detected'),
+  fullName: safeString(50, true),
   dateOfBirth: z.string().default(''),
   timeOfBirth: z.string().default(''),
-  placeOfBirth: z
-    .string()
-    .max(100, 'Max 100 characters allowed')
-    .refine((val) => !/[<>]/.test(val), 'Invalid characters detected')
-    .default(''),
-  height: z.string().max(20, 'Max 20 chars').default(''),
-  weight: z.string().max(20, 'Max 20 chars').default(''),
-  bloodGroup: z.string().max(10, 'Max 10 chars').default(''),
-  complexion: z.string().max(50, 'Max 50 chars').default(''),
+  placeOfBirth: safeString(100),
+  height: safeString(20),
+  weight: safeString(20),
+  bloodGroup: safeString(10),
+  complexion: safeString(50),
   religion: z.string().default(''),
-  caste: z.string().max(50, 'Max 50 chars').default(''),
-  subCaste: z.string().max(50, 'Max 50 chars').default(''),
-  gotra: z.string().max(50, 'Max 50 chars').default(''),
+  caste: safeString(50),
+  subCaste: safeString(50),
+  gotra: safeString(50),
   manglik: z.string().default(''),
   photo: z.string().default(''),
 });
 
 export const educationCareerSchema = z.object({
-  highestEducation: z.string().max(100, 'Max 100 chars').default(''),
-  occupation: z.string().max(100, 'Max 100 chars').default(''),
-  companyName: z.string().max(100, 'Max 100 chars').default(''),
-  annualIncome: z.string().max(50, 'Max 50 chars').default(''),
+  highestEducation: safeString(100),
+  occupation: safeString(100),
+  companyName: safeString(100),
+  annualIncome: safeString(50),
 });
 
 export const familyDetailsSchema = z.object({
-  fathersName: z.string().max(50, 'Max 50 chars').default(''),
-  fathersOccupation: z.string().max(100, 'Max 100 chars').default(''),
-  mothersName: z.string().max(50, 'Max 50 chars').default(''),
-  mothersOccupation: z.string().max(100, 'Max 100 chars').default(''),
-  siblings: z.string().max(150, 'Max 150 chars').default(''),
-  grandparents: z.string().max(150, 'Max 150 chars').default(''),
+  fathersName: safeString(50),
+  fathersOccupation: safeString(100),
+  mothersName: safeString(50),
+  mothersOccupation: safeString(100),
+  siblings: safeString(150),
+  grandparents: safeString(150),
   familyType: z.string().default(''),
-  hometown: z.string().max(100, 'Max 100 chars').default(''),
+  hometown: safeString(100),
 });
 
 export const contactDetailsSchema = z.object({
@@ -53,11 +61,7 @@ export const contactDetailsSchema = z.object({
     .string()
     .refine((val) => !val || /^\S+@\S+\.\S+$/.test(val), 'Invalid email address')
     .default(''),
-  address: z
-    .string()
-    .max(200, 'Max 200 characters allowed')
-    .refine((val) => !val || !/[<>]/.test(val), 'Invalid characters detected')
-    .default(''),
+  address: safeString(200),
 });
 
 export const biodataSchema = z.object({

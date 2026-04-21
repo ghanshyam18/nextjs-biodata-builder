@@ -1,18 +1,21 @@
 'use client';
 
-import { Box } from '@mantine/core';
+import { Box, Center, Loader } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
-import ClassicTemplate from '../../../../components/templates/Classic';
-import ElegantTemplate from '../../../../components/templates/Elegant';
-import FloralTemplate from '../../../../components/templates/Floral';
-import MinimalistTemplate from '../../../../components/templates/Minimalist';
-import ModernTemplate from '../../../../components/templates/Modern';
-import TraditionalTemplate from '../../../../components/templates/Traditional';
+import { inter } from '../../../../app/fonts';
 import { A4_ASPECT_RATIO, A4_WIDTH_PX } from '../../../../shared/constants/dimensions';
-import { inter, outfit } from '../../../../shared/fonts';
 import type { BiodataData, TemplateStyle } from '../../../../shared/types';
+
+// Dynamic imports for templates to reduce bundle size and memory usage on low-end devices
+const TraditionalTemplate = dynamic(() => import('../../../../components/templates/Traditional'));
+const ModernTemplate = dynamic(() => import('../../../../components/templates/Modern'));
+const MinimalistTemplate = dynamic(() => import('../../../../components/templates/Minimalist'));
+const FloralTemplate = dynamic(() => import('../../../../components/templates/Floral'));
+const ElegantTemplate = dynamic(() => import('../../../../components/templates/Elegant'));
+const ClassicTemplate = dynamic(() => import('../../../../components/templates/Classic'));
 
 interface PreviewProps {
   data: BiodataData;
@@ -30,36 +33,35 @@ export default function Preview({ data, template, isPrint = false }: PreviewProp
   useEffect(() => {
     if (isPrint) {
       setScale(1);
-      setIsReady(true); // Redundant but safe
+      setIsReady(true);
       return;
     }
 
-    // Non-print mode: wait for width or fallback
     if (width > 0) {
       const newScale = Math.min(1, width / TARGET_WIDTH);
       setScale(newScale);
 
-      // We use a small delay for non-print UI to ensure layout has settled before showing
-      const timer = setTimeout(() => setIsReady(true), 50);
+      const timer = setTimeout(() => setIsReady(true), 100);
       return () => clearTimeout(timer);
     }
   }, [width, isPrint, TARGET_WIDTH]);
 
   const getTemplate = () => {
+    const props = { data };
     switch (template) {
       case 'modern':
-        return <ModernTemplate data={data} />;
+        return <ModernTemplate {...props} />;
       case 'minimalist':
-        return <MinimalistTemplate data={data} />;
+        return <MinimalistTemplate {...props} />;
       case 'floral':
-        return <FloralTemplate data={data} />;
+        return <FloralTemplate {...props} />;
       case 'elegant':
-        return <ElegantTemplate data={data} />;
+        return <ElegantTemplate {...props} />;
       case 'classic':
-        return <ClassicTemplate data={data} />;
+        return <ClassicTemplate {...props} />;
       case 'traditional':
       default:
-        return <TraditionalTemplate data={data} />;
+        return <TraditionalTemplate {...props} />;
     }
   };
 
@@ -68,15 +70,21 @@ export default function Preview({ data, template, isPrint = false }: PreviewProp
   return (
     <Box
       ref={ref}
-      className={`preview-container ${inter.className} ${outfit.variable}`}
+      className="preview-container"
       style={{
         width: '100%',
-        minHeight: scaledHeight,
+        minHeight: isPrint ? TARGET_WIDTH * ASPECT_RATIO : scaledHeight,
         opacity: isReady ? 1 : 0,
         transition: 'opacity 0.2s ease',
-        fontFamily: "'Inter', sans-serif", // Direct fallback for print engines
+        fontFamily: inter.style.fontFamily,
       }}
     >
+      {!isReady && !isPrint && (
+        <Center h={scaledHeight || 400}>
+          <Loader size="sm" />
+        </Center>
+      )}
+
       <Box
         className="preview-content"
         style={{
@@ -85,7 +93,7 @@ export default function Preview({ data, template, isPrint = false }: PreviewProp
           position: 'relative',
           transform: isPrint ? 'none' : `scale(${scale})`,
           transformOrigin: 'top left',
-          // No transition on transform here to avoid the "shrinking" animation on first load
+          visibility: isReady ? 'visible' : 'hidden',
         }}
       >
         {getTemplate()}
