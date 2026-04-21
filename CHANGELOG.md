@@ -1,9 +1,18 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.3.0] - 2026-04-21
+
+### Added
+- **Native PDF Generation**: Migrated the "Traditional" template to `@react-pdf/renderer` for vector-quality, selectable-text exports.
+- **Global Error Boundary**: Integrated a top-level error handling system to prevent total application crashes and improve resilience.
+- **Form Reset Flow**: Added a dedicated form reset functionality with a safety confirmation modal.
+
+### Improved
+- **Mobile Performance**: Optimized main-thread responsiveness via on-demand synchronization logic.
+- **Action Bars**: Refactored action bars into a modular, responsive component for better mobile accessibility.
+- **Form Validation**: Enhanced `biodataSchema` and `useBiodataForm` hooks for stricter data integrity and character limits.
 
 ## [1.2.0] - 2026-04-18
 

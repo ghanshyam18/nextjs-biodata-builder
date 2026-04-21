@@ -30,11 +30,17 @@ Only merge the PR into `main` after:
 2. You have manually verified the changes on the Preview URL.
 
 ## 🚀 5. Versioning & Changelog
-When you are ready to "Release" a set of changes:
-1. Update the `version` in `package.json`.
-2. Update the `CHANGELOG.md` with the new version and its changes.
-3. Commit these as `chore: release vX.X.X`.
-4. Tag the commit: `git tag vX.X.X` and `git push --tags`.
+When you are ready to "Release" a set of changes, use the automated release script. This will automatically update the version in `package.json`, generate a `CHANGELOG.md` entry, and create a git tag.
+
+```bash
+npm run release
+```
+
+Then push the changes and tags to GitHub:
+
+```bash
+git push --follow-tags origin main
+```
 
 ---
 *By following this process, we ensure that every user gets a stable, high-performance experience every time they visit the site.*
