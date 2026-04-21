@@ -10,8 +10,9 @@ A professional, high-performance, and SEO-optimized web application to create be
 - **✨ Premium Templates**: 6 professionally designed templates (Traditional, Modern, Minimalist, Floral, Elegant, Classic) to suit every preference.
 - **📱 Mobile-First UX**: Native app-like experience with thumb-friendly navigation, "Enter-to-Next" form logic, and 100% responsive layouts.
 - **🔒 Privacy First**: Your data never leaves your device. All profiles are stored locally in your browser using **IndexedDB** — zero server dependency.
-- **🖼️ High-Quality Export**: Generate and download professional PDFs instantly with cross-browser print consistency.
-- **📁 Multi-Profile Support**: Save multiple profiles and switch between them effortlessly.
+- **🖼️ High-Quality Native Export**: Generate professional PDFs with selectable text and vector-quality rendering using native document generation (no more blurry snapshots).
+- **📁 Multi-Profile Support**: Save multiple profiles and switch between them effortlessly with persistent storage.
+- **🛡️ Advanced Stability**: Integrated global error boundaries and automated state recovery.
 
 ## 🛠️ Tech Stack
 
@@ -19,7 +20,8 @@ A professional, high-performance, and SEO-optimized web application to create be
 - **UI Library**: [Mantine UI](https://mantine.dev/) (Fully themed & Responsive)
 - **Storage**: [localforage](https://localforage.github.io/localForage/) (Asynchronous IndexedDB wrapper for large data/images)
 - **Icons**: [Lucide React](https://lucide.dev/)
-- **Forms**: [@mantine/form](https://mantine.dev/form/use-form/) with strict validation and XSS security.
+- **PDF Engine**: [@react-pdf/renderer](https://react-pdf.org/) (Native PDF generation with selectable text)
+- **Forms**: [@mantine/form](https://mantine.dev/form/use-form/) with strict Zod validation and XSS security.
 
 ## 🚀 Getting Started
 
