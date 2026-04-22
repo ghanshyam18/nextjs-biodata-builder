@@ -2,6 +2,7 @@
   "name": "biodata-builder",
   "private": true,
   "version": "1.3.0",
+  "author": "Ghanshyam Motwani",
   "license": "MIT",
   "type": "module",
   "scripts": {
